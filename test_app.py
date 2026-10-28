@@ -44,7 +44,7 @@ print("[PASS] GET /login -> 200 OK with Year 2026, Group 11, and Team Metadata")
 
 # 3. Successful Admin Login
 r = client.post("/login", data={"username": "admin", "password": "admin"}, follow_redirects=True)
-assert r.status_code == 200 and b"Neural Hub" in r.data
+assert r.status_code == 200 and (b"FINCH" in r.data and b"Console" in r.data)
 print("[PASS] POST /login -> Authenticated successfully with 'admin'/'admin'")
 
 # 4. Access Protected Dashboard
@@ -93,11 +93,21 @@ assert r.status_code == 200 and "text/csv" in r.headers.get("Content-Type", "")
 assert b"Original_Sentence" in r.data and b"Verdict" in r.data
 print("[PASS] GET /api/export/csv -> Successfully exported CSV audit file")
 
-# 10. Secure Logout
+# 10. Printable Academic Report Route
+r = client.get("/report/audit")
+assert r.status_code == 200 and b"Merkle" in r.data and b"Group 11" in r.data
+print("[PASS] GET /report/audit -> Successfully generated printable Academic ZK Verification Certificate")
+
+# 11. Endpoint Connectivity & Key Management
+r = client.post("/api/test-connection")
+assert r.status_code == 200
+print("[PASS] POST /api/test-connection -> Endpoint connectivity test executed")
+
+# 12. Secure Logout
 r = client.get("/logout", follow_redirects=True)
 assert r.status_code == 200 and b"Admin Console" in r.data
 print("[PASS] GET /logout -> Session terminated safely")
 
 print("=" * 65)
-print("  ALL 10 COMPREHENSIVE TESTS PASSED WITH 100% SUCCESS! ✓")
+print("  ALL 12 COMPREHENSIVE TESTS PASSED WITH 100% SUCCESS! ✓")
 print("=" * 65)

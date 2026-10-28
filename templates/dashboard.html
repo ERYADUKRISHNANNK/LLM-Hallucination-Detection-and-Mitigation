@@ -41,10 +41,10 @@
 
   <!-- ── Top Navigation Bar ──────────────────────────────────────── -->
   <header class="sticky top-0 z-40 w-full border-b border-slate-800/80 backdrop-blur-xl bg-slate-900/70 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
       
       <!-- Brand & Project Details -->
-      <div class="flex items-center space-x-3.5">
+      <div class="flex items-center space-x-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-cyan-500/25">
           <i class="fa-solid fa-brain text-white text-base"></i>
         </div>
@@ -54,7 +54,7 @@
               FINCH<span class="text-cyan-400 font-extrabold">-ZK</span>
             </span>
             <span class="text-[10px] tracking-wider uppercase font-semibold px-2 py-0.5 rounded-full bg-cyan-950/80 text-cyan-300 border border-cyan-800/60">
-              Neural Hub
+              v2.4
             </span>
             <span class="hidden md:inline-flex text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
               Group {{ metadata.group_number }}
@@ -67,25 +67,24 @@
       </div>
 
       <!-- Action Cluster -->
-      <div class="flex items-center gap-3">
-        <!-- Model Status Badges -->
-        <div class="hidden lg:flex items-center gap-2 text-xs bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-xl">
-          <span class="flex items-center gap-1.5 text-slate-400">
-            <span class="w-2 h-2 rounded-full {% if anthropic_configured %}bg-emerald-400{% else %}bg-amber-400 animate-pulse{% endif %}"></span>
-            Claude 3.5 Sonnet
-          </span>
-          <span class="text-slate-700">|</span>
-          <span class="flex items-center gap-1.5 text-slate-400">
-            <span class="w-2 h-2 rounded-full {% if groq_configured %}bg-emerald-400{% else %}bg-amber-400 animate-pulse{% endif %}"></span>
-            Groq Llama 3.3 70B
-          </span>
-        </div>
+      <div class="flex items-center gap-2.5">
+        
+        <!-- Engine Status Pill & Settings Trigger -->
+        <button
+          onclick="toggleSettingsModal(true)"
+          class="flex items-center gap-2 text-xs bg-slate-900/90 hover:bg-slate-800 border border-slate-800 px-3 py-1.5 rounded-xl transition text-slate-300"
+          title="Configure API Keys &amp; Ping Endpoints"
+        >
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="font-mono text-[11px]">Neural Adapter</span>
+          <i class="fa-solid fa-sliders text-slate-400 text-[10px] ml-1"></i>
+        </button>
 
-        <!-- Project Info Modal Trigger -->
+        <!-- Academic Info Modal Trigger -->
         <button
           onclick="toggleAboutModal(true)"
           class="px-3 py-1.5 rounded-xl text-xs font-medium text-slate-300 bg-slate-800/80 hover:bg-slate-700 border border-slate-700 transition flex items-center gap-1.5"
-          title="View Research Team & Guide"
+          title="View Research Team &amp; Guide"
         >
           <i class="fa-solid fa-graduation-cap text-cyan-400"></i>
           <span class="hidden sm:inline">Research Team</span>
@@ -97,7 +96,7 @@
           class="px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-300 bg-rose-950/40 hover:bg-rose-900/50 border border-rose-800/50 transition flex items-center gap-1.5"
         >
           <i class="fa-solid fa-arrow-right-from-bracket"></i>
-          <span>Logout</span>
+          <span class="hidden sm:inline">Logout</span>
         </a>
       </div>
 
@@ -105,15 +104,15 @@
   </header>
 
   <!-- ── Main Dashboard Content ──────────────────────────────────── -->
-  <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 py-8 space-y-8 z-10">
+  <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 space-y-7 z-10">
 
-    <!-- Top Hero Banner -->
+    <!-- Top Hero Banner with ZK Cryptographic Seal -->
     <div class="relative overflow-hidden rounded-2xl backdrop-blur-xl bg-gradient-to-r from-slate-900/90 via-slate-900/70 to-indigo-950/60 border border-slate-800 p-6 shadow-2xl">
       <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-950/70 border border-cyan-800/80 text-cyan-300 mb-2">
-            <i class="fa-solid fa-atom text-cyan-400"></i>
-            <span>FINCH-ZK Multi-Prompt Verification Pipeline</span>
+            <i class="fa-solid fa-shield-halved text-cyan-400"></i>
+            <span>FINCH-ZK Verifiable Hallucination Mitigation Engine</span>
           </div>
           <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Hallucination Inspector &amp; Mitigation Console
@@ -123,14 +122,15 @@
           </p>
         </div>
 
-        <!-- Quick Metrics Pill (Dynamic after run) -->
-        <div id="quick-status-pill" class="hidden md:flex flex-col items-end text-right">
-          <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">System State</span>
-          <span class="text-sm font-bold text-emerald-400 flex items-center gap-2 mt-0.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            Pipeline Synchronized
+        <!-- Live Cryptographic Badge -->
+        <div id="zk-hero-badge" class="hidden md:flex flex-col items-end text-right bg-slate-950/60 border border-slate-800/80 p-3 rounded-xl font-mono">
+          <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+            <i class="fa-solid fa-fingerprint text-indigo-400"></i> ZK Proof Token
           </span>
-          <span class="text-[11px] text-slate-500 mt-1">Ready for queries</span>
+          <span id="hero-zk-token" class="text-xs font-bold text-cyan-300 mt-0.5">UNINITIALIZED</span>
+          <span class="text-[10px] text-emerald-400 mt-0.5 flex items-center gap-1">
+            <i class="fa-solid fa-lock text-[9px]"></i> SHA-256 Merkle Certified
+          </span>
         </div>
       </div>
     </div>
@@ -183,11 +183,11 @@
             <div>
               <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5 flex items-center justify-between">
                 <span>2. Target LLM Response (To Audit)</span>
-                <span class="text-slate-500 font-mono text-[10px]">Unverified Text</span>
+                <span class="text-slate-500 font-mono text-[10px]">Candidate Output</span>
               </label>
               <textarea
                 id="target-response"
-                rows="8"
+                rows="7"
                 required
                 class="w-full p-3.5 rounded-xl glass-input text-sm text-slate-200 placeholder-slate-500 focus:ring-1 focus:ring-cyan-500 transition leading-relaxed font-mono"
                 placeholder="Paste the candidate LLM response here for FINCH-ZK factuality breakdown..."
@@ -208,108 +208,124 @@
         </div>
       </div>
 
-      <!-- Right Column: Quick Presets & Pipeline Stages (5 Cols) -->
-      <div class="lg:col-span-5 space-y-6">
+      <!-- Right Column: 5 Diverse Benchmark Presets (5 Cols) -->
+      <div class="lg:col-span-5 space-y-4">
         
-        <!-- Interactive Benchmark Examples Card -->
-        <div class="backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 shadow-2xl rounded-2xl p-6">
-          <div class="flex items-center gap-2.5 mb-3 border-b border-slate-800 pb-3">
-            <span class="w-8 h-8 rounded-lg bg-indigo-950/80 border border-indigo-800 text-indigo-400 flex items-center justify-center text-sm">
-              <i class="fa-solid fa-bolt-lightning"></i>
-            </span>
-            <div>
-              <h3 class="text-sm font-bold text-white uppercase tracking-wider">Benchmark Testcases</h3>
-              <p class="text-xs text-slate-400">Load calibrated hallucination samples</p>
+        <div class="backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 shadow-2xl rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-indigo-950/80 border border-indigo-800 text-indigo-400 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-flask-vial"></i>
+              </span>
+              <div>
+                <h3 class="text-xs font-bold text-white uppercase tracking-wider">Benchmark Testcases</h3>
+                <p class="text-[11px] text-slate-400">Click to instantly load pre-calibrated cases</p>
+              </div>
             </div>
+            <span class="text-[10px] text-cyan-400 font-mono font-bold bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/40">5 Domains</span>
           </div>
 
-          <div class="space-y-2.5">
-            <!-- Preset 1 -->
+          <div class="space-y-2 max-h-[390px] overflow-y-auto pr-1">
+            <!-- Preset 1: History & Inventions -->
             <button
               type="button"
-              class="preset-btn w-full p-3 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 text-left transition group"
+              class="preset-btn w-full p-2.5 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 text-left transition group"
               data-prompt="Who invented the telephone and what else did he discover?"
-              data-response="Alexander Graham Bell was awarded the first U.S. patent for the telephone in 1876. He was born in Edinburgh, Scotland in 1847. Bell successfully transmitted the first intelligible speech to Thomas Watson on March 10, 1876. In his later career, Alexander Graham Bell invented the internet and the radio. He also made significant contributions to optical telecommunications and hydrofoils."
+              data-response="Alexander Graham Bell was awarded the first U.S. patent for the telephone in 1876. He was born in Edinburgh, Scotland in 1847. In his later career, Alexander Graham Bell invented the internet and the radio. He also made significant contributions to optical telecommunications."
             >
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-cyan-300 group-hover:text-cyan-200">
-                  <i class="fa-solid fa-phone-volume mr-1.5"></i> Alexander Graham Bell (Inventions)
+                  <i class="fa-solid fa-phone-volume mr-1 text-cyan-400"></i> Alexander Graham Bell
                 </span>
-                <span class="text-[10px] bg-rose-950/80 text-rose-300 border border-rose-800/70 px-2 py-0.5 rounded-full font-mono">
-                  1 Contradiction
+                <span class="text-[9px] bg-rose-950/80 text-rose-300 border border-rose-800/70 px-1.5 py-0.5 rounded font-mono">
+                  Contradiction
                 </span>
               </div>
-              <p class="text-[11px] text-slate-400 mt-1 line-clamp-2">
-                Contains historical hallucination claiming Bell invented the internet and radio.
+              <p class="text-[10px] text-slate-400 mt-0.5 line-clamp-1">
+                Fabricated attribution claiming Bell invented the internet &amp; radio.
               </p>
             </button>
 
-            <!-- Preset 2 -->
+            <!-- Preset 2: Space Flight -->
             <button
               type="button"
-              class="preset-btn w-full p-3 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 text-left transition group"
+              class="preset-btn w-full p-2.5 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 text-left transition group"
               data-prompt="Give me a brief summary of the Apollo 11 lunar landing."
-              data-response="The Apollo 11 mission was launched on July 16, 1969 by NASA. Commander Neil Armstrong and Lunar Module Pilot Buzz Aldrin landed the Lunar Module Eagle on July 20, 1969. The Apollo 11 mission carried 5 astronauts inside the Command Module. Neil Armstrong was the first person to walk on the lunar surface. The crew safely splashed down in the Pacific Ocean on July 24, 1969."
+              data-response="The Apollo 11 mission was launched on July 16, 1969 by NASA. Commander Neil Armstrong and Lunar Module Pilot Buzz Aldrin landed the Eagle on July 20, 1969. The Apollo 11 mission carried 5 astronauts inside the Command Module. Neil Armstrong became the first human to walk on the Moon."
             >
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-violet-300 group-hover:text-violet-200">
-                  <i class="fa-solid fa-shuttle-space mr-1.5"></i> Apollo 11 Lunar Mission
+                  <i class="fa-solid fa-shuttle-space mr-1 text-violet-400"></i> Apollo 11 Crew Count
                 </span>
-                <span class="text-[10px] bg-rose-950/80 text-rose-300 border border-rose-800/70 px-2 py-0.5 rounded-full font-mono">
-                  1 Contradiction
+                <span class="text-[9px] bg-rose-950/80 text-rose-300 border border-rose-800/70 px-1.5 py-0.5 rounded font-mono">
+                  Quantity Error
                 </span>
               </div>
-              <p class="text-[11px] text-slate-400 mt-1 line-clamp-2">
-                Contains crew count hallucination asserting Apollo 11 carried 5 astronauts instead of 3.
+              <p class="text-[10px] text-slate-400 mt-0.5 line-clamp-1">
+                Asserts Apollo 11 carried 5 astronauts instead of 3.
               </p>
             </button>
 
-            <!-- Preset 3 -->
+            <!-- Preset 3: Quantum Physics -->
             <button
               type="button"
-              class="preset-btn w-full p-3 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 text-left transition group"
+              class="preset-btn w-full p-2.5 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 text-left transition group"
               data-prompt="What did Albert Einstein win the Nobel Prize for?"
-              data-response="Albert Einstein was a theoretical physicist who developed the theory of relativity. In 1921, he was awarded the Nobel Prize in Physics for his discovery of the law of the photoelectric effect. This work was pivotal in establishing quantum theory. Einstein is widely considered one of the greatest scientists of all time."
+              data-response="Albert Einstein was awarded the 1921 Nobel Prize in Physics for his explanation of the law of the photoelectric effect. His theoretical work was essential for quantum mechanics. He developed the general theory of relativity in 1915."
             >
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-emerald-300 group-hover:text-emerald-200">
-                  <i class="fa-solid fa-award mr-1.5"></i> Einstein Nobel Prize
+                  <i class="fa-solid fa-award mr-1 text-emerald-400"></i> Einstein Nobel Prize
                 </span>
-                <span class="text-[10px] bg-emerald-950/80 text-emerald-300 border border-emerald-800/70 px-2 py-0.5 rounded-full font-mono">
+                <span class="text-[9px] bg-emerald-950/80 text-emerald-300 border border-emerald-800/70 px-1.5 py-0.5 rounded font-mono">
                   100% Accurate
                 </span>
               </div>
-              <p class="text-[11px] text-slate-400 mt-1 line-clamp-2">
-                Ground truth scientific benchmark with 0 contradictions.
+              <p class="text-[10px] text-slate-400 mt-0.5 line-clamp-1">
+                Canonical ground-truth physics consensus benchmark.
+              </p>
+            </button>
+
+            <!-- Preset 4: Geopolitics -->
+            <button
+              type="button"
+              class="preset-btn w-full p-2.5 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 text-left transition group"
+              data-prompt="What is the capital city of France and Germany?"
+              data-response="The capital of Germany is Berlin. In contrast, the capital of France is Berlin. Both nations are founding member states of the European Union."
+            >
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-amber-300 group-hover:text-amber-200">
+                  <i class="fa-solid fa-earth-europe mr-1 text-amber-400"></i> European Capitals
+                </span>
+                <span class="text-[9px] bg-rose-950/80 text-rose-300 border border-rose-800/70 px-1.5 py-0.5 rounded font-mono">
+                  Entity Error
+                </span>
+              </div>
+              <p class="text-[10px] text-slate-400 mt-0.5 line-clamp-1">
+                Classic hallucination asserting Paris is Berlin.
+              </p>
+            </button>
+
+            <!-- Preset 5: US History -->
+            <button
+              type="button"
+              class="preset-btn w-full p-2.5 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 text-left transition group"
+              data-prompt="Who was the first President of the United States?"
+              data-response="George Washington was the first President of the United States, serving from 1789 to 1797. Abraham Lincoln was the first President of the United States during the Civil War. Washington presided over the Constitutional Convention of 1787."
+            >
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-indigo-300 group-hover:text-indigo-200">
+                  <i class="fa-solid fa-landmark mr-1 text-indigo-400"></i> US Presidential History
+                </span>
+                <span class="text-[9px] bg-rose-950/80 text-rose-300 border border-rose-800/70 px-1.5 py-0.5 rounded font-mono">
+                  Attribution
+                </span>
+              </div>
+              <p class="text-[10px] text-slate-400 mt-0.5 line-clamp-1">
+                Contradicts presidential sequence asserting Lincoln was 1st.
               </p>
             </button>
           </div>
-        </div>
-
-        <!-- Architecture Flow Card -->
-        <div class="backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 shadow-2xl rounded-2xl p-6 space-y-3">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i class="fa-solid fa-network-wired text-cyan-400"></i>
-            FINCH-ZK Protocol Sequence
-          </h3>
-          <ul class="text-xs text-slate-400 space-y-2 font-mono">
-            <li class="flex items-center gap-2">
-              <span class="w-5 h-5 rounded-full bg-cyan-950 text-cyan-400 flex items-center justify-center text-[10px] font-bold">1</span>
-              <span>PySBD Sentence Segmentation</span>
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="w-5 h-5 rounded-full bg-indigo-950 text-indigo-400 flex items-center justify-center text-[10px] font-bold">2</span>
-              <span>Identity &amp; CoT Sample Generation</span>
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="w-5 h-5 rounded-full bg-violet-950 text-violet-400 flex items-center justify-center text-[10px] font-bold">3</span>
-              <span>Parallel Consensus Judge Evaluation</span>
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="w-5 h-5 rounded-full bg-emerald-950 text-emerald-400 flex items-center justify-center text-[10px] font-bold">4</span>
-              <span>Block-Level Correction &amp; Synthesis Reflection</span>
-            </li>
-          </ul>
         </div>
 
       </div>
@@ -323,7 +339,7 @@
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         
         <!-- Factuality Score -->
-        <div class="backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 rounded-2xl p-5 relative overflow-hidden">
+        <div class="backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 rounded-2xl p-4 relative overflow-hidden">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Factuality Score</span>
             <i class="fa-solid fa-shield-check text-emerald-400 text-sm"></i>
@@ -338,7 +354,7 @@
         </div>
 
         <!-- Hallucination Index -->
-        <div class="backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 rounded-2xl p-5 relative overflow-hidden">
+        <div class="backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 rounded-2xl p-4 relative overflow-hidden">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Hallucination Index</span>
             <i class="fa-solid fa-triangle-exclamation text-rose-400 text-sm"></i>
@@ -353,7 +369,7 @@
         </div>
 
         <!-- Latency Overhead -->
-        <div class="backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 rounded-2xl p-5 relative overflow-hidden">
+        <div class="backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 rounded-2xl p-4 relative overflow-hidden">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Latency</span>
             <i class="fa-solid fa-stopwatch text-cyan-400 text-sm"></i>
@@ -362,11 +378,11 @@
             <span id="metric-latency" class="text-3xl font-extrabold text-cyan-300">--</span>
             <span class="text-xs text-slate-400">Seconds</span>
           </div>
-          <p class="text-[11px] text-slate-500 mt-3 font-mono">Multi-threaded consensus</p>
+          <p class="text-[11px] text-slate-500 mt-3 font-mono">Consensus profiling</p>
         </div>
 
         <!-- Sentence Blocks -->
-        <div class="backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 rounded-2xl p-5 relative overflow-hidden">
+        <div class="backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 rounded-2xl p-4 relative overflow-hidden">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Sentence Chunks</span>
             <i class="fa-solid fa-cubes text-violet-400 text-sm"></i>
@@ -380,29 +396,29 @@
 
       </div>
 
-      <!-- Charts & Visual Analytics Hub -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Charts & Visual Analytics Hub (3-Card Layout) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
         
-        <!-- Doughnut Distribution Chart -->
-        <div class="lg:col-span-5 backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 rounded-2xl p-6 shadow-2xl flex flex-col justify-between">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+        <!-- Chart 1: Doughnut Distribution -->
+        <div class="lg:col-span-4 backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
               <i class="fa-solid fa-chart-pie text-cyan-400"></i>
               Factuality Breakdown
             </h3>
-            <span class="text-[10px] text-slate-500 uppercase font-mono">Sentence Level</span>
+            <span class="text-[10px] text-slate-500 uppercase font-mono">Verdict</span>
           </div>
-          <div class="relative h-64 flex items-center justify-center">
+          <div class="relative h-56 flex items-center justify-center">
             <canvas id="factualityChart"></canvas>
           </div>
-          <div class="grid grid-cols-3 gap-2 mt-4 text-center text-xs pt-3 border-t border-slate-800">
+          <div class="grid grid-cols-3 gap-2 mt-3 text-center text-xs pt-2.5 border-t border-slate-800">
             <div>
               <span class="block text-emerald-400 font-bold" id="stat-accurate">0</span>
               <span class="text-[10px] text-slate-500 uppercase">Accurate</span>
             </div>
             <div>
               <span class="block text-rose-400 font-bold" id="stat-contra">0</span>
-              <span class="text-[10px] text-slate-500 uppercase">Contradiction</span>
+              <span class="text-[10px] text-slate-500 uppercase">Contra</span>
             </div>
             <div>
               <span class="block text-amber-400 font-bold" id="stat-neutral">0</span>
@@ -411,21 +427,38 @@
           </div>
         </div>
 
-        <!-- Latency Breakdown Radar/Bar Chart -->
-        <div class="lg:col-span-7 backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 rounded-2xl p-6 shadow-2xl flex flex-col justify-between">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+        <!-- Chart 2: Latency Profiler -->
+        <div class="lg:col-span-4 backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
               <i class="fa-solid fa-chart-simple text-violet-400"></i>
-              Pipeline Latency &amp; Token Overhead
+              Pipeline Latency
             </h3>
-            <span class="text-[10px] text-slate-500 uppercase font-mono">Stage Profiler</span>
+            <span class="text-[10px] text-slate-500 uppercase font-mono">Stages</span>
           </div>
-          <div class="relative h-64 flex items-center justify-center">
+          <div class="relative h-56 flex items-center justify-center">
             <canvas id="latencyChart"></canvas>
           </div>
-          <div class="flex items-center justify-between text-xs text-slate-400 pt-3 border-t border-slate-800 font-mono">
+          <div class="flex items-center justify-between text-xs text-slate-400 pt-2.5 border-t border-slate-800 font-mono text-[11px]">
             <span>Samples: <strong id="stat-samples-count" class="text-white">--</strong></span>
             <span>Est. Tokens: <strong id="stat-token-count" class="text-white">--</strong></span>
+          </div>
+        </div>
+
+        <!-- Chart 3: Taxonomy Breakdown -->
+        <div class="lg:col-span-4 backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-layer-group text-amber-400"></i>
+              Error Taxonomy
+            </h3>
+            <span class="text-[10px] text-slate-500 uppercase font-mono">Academic</span>
+          </div>
+          <div class="relative h-56 flex items-center justify-center">
+            <canvas id="taxonomyChart"></canvas>
+          </div>
+          <div class="text-center text-[10px] text-slate-500 pt-2.5 border-t border-slate-800 font-mono">
+            Categorized via FINCH-ZK Neuro-Symbolic Grammar
           </div>
         </div>
 
@@ -433,7 +466,29 @@
 
     </div>
 
-    <!-- ── Sentence-Level Block Inspector ────────────────────────── -->
+    <!-- ── Interactive Sentence Factuality Heatmap ───────────────── -->
+    <div class="backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 shadow-2xl rounded-2xl p-5 space-y-3">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+        <div class="flex items-center gap-2">
+          <span class="w-7 h-7 rounded-lg bg-indigo-950/80 border border-indigo-800 text-indigo-400 flex items-center justify-center text-xs">
+            <i class="fa-solid fa-highlighter"></i>
+          </span>
+          <div>
+            <h3 class="text-xs font-bold text-white uppercase tracking-wider">Document Factuality Heatmap</h3>
+            <p class="text-[11px] text-slate-400">Visual inline sentence highlighting with clickable inspector links</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 text-[10px] font-mono">
+          <span class="flex items-center gap-1 text-emerald-400"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Verified</span>
+          <span class="flex items-center gap-1 text-rose-400"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Contradiction</span>
+        </div>
+      </div>
+      <div id="heatmap-container" class="p-4 rounded-xl bg-slate-950/70 border border-slate-800/80 text-xs font-mono leading-relaxed min-h-[70px]">
+        <span class="text-slate-600">Execute analysis to generate interactive paragraph sentence overlay.</span>
+      </div>
+    </div>
+
+    <!-- ── Sentence-Level Block Inspector & Multi-Model Matrix ─────── -->
     <div class="backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 shadow-2xl rounded-2xl p-6 space-y-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
         <div class="flex items-center gap-2.5">
@@ -442,7 +497,7 @@
           </span>
           <div>
             <h2 class="text-sm font-bold text-white uppercase tracking-wider">Sentence-Level Block Inspector</h2>
-            <p class="text-xs text-slate-400">Granular truth verification &amp; contradiction mitigation</p>
+            <p class="text-xs text-slate-400">Multi-model voting agreement matrix &amp; targeted corrections</p>
           </div>
         </div>
 
@@ -472,12 +527,31 @@
           </span>
           <div>
             <h2 class="text-sm font-bold text-white uppercase tracking-wider">Mitigation Diff &amp; Verified Output</h2>
-            <p class="text-xs text-slate-400">Original unverified candidate vs. FINCH-ZK synthesized final response</p>
+            <p class="text-xs text-slate-400">Side-by-side or unified word-level diff viewer</p>
           </div>
         </div>
 
-        <!-- Export & Copy Actions -->
-        <div class="flex items-center gap-2">
+        <!-- View Switcher & Actions -->
+        <div class="flex items-center gap-2 flex-wrap">
+          
+          <!-- Diff View Mode Toggle -->
+          <div class="inline-flex rounded-xl bg-slate-800/80 p-0.5 border border-slate-700 text-xs">
+            <button
+              id="btn-diff-split"
+              onclick="setDiffMode('split')"
+              class="px-2.5 py-1 rounded-lg font-medium text-cyan-300 bg-slate-900 shadow-sm"
+            >
+              Side-by-Side
+            </button>
+            <button
+              id="btn-diff-unified"
+              onclick="setDiffMode('unified')"
+              class="px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white"
+            >
+              Unified Diff
+            </button>
+          </div>
+
           <button
             id="btn-copy-mitigated"
             class="px-3 py-1.5 rounded-xl text-xs font-semibold text-cyan-300 bg-cyan-950/70 hover:bg-cyan-900/70 border border-cyan-800/60 transition flex items-center gap-1.5"
@@ -485,27 +559,38 @@
             <i class="fa-regular fa-copy"></i>
             <span>Copy Mitigated</span>
           </button>
+
+          <!-- Printable Academic Certificate Link -->
+          <a
+            href="{{ url_for('view_printable_audit') }}"
+            target="_blank"
+            class="px-3 py-1.5 rounded-xl text-xs font-semibold text-indigo-300 bg-indigo-950/70 hover:bg-indigo-900/70 border border-indigo-800/60 transition flex items-center gap-1.5"
+            title="Open printable academic verification certificate"
+          >
+            <i class="fa-solid fa-certificate text-indigo-400"></i>
+            <span>Print Certificate</span>
+          </a>
+
+          <!-- JSON & CSV Downloads -->
           <a
             href="{{ url_for('export_json') }}"
-            class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition flex items-center gap-1.5"
+            class="px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition"
             title="Download full JSON audit report"
           >
             <i class="fa-solid fa-file-code text-indigo-400"></i>
-            <span>JSON Audit</span>
           </a>
           <a
             href="{{ url_for('export_csv') }}"
-            class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition flex items-center gap-1.5"
+            class="px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition"
             title="Download CSV table of sentence breakdowns"
           >
             <i class="fa-solid fa-file-csv text-emerald-400"></i>
-            <span>CSV Audit</span>
           </a>
         </div>
       </div>
 
-      <!-- Side-by-Side Dual Panels -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Split Dual Columns -->
+      <div id="diff-split-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         <!-- Original Column -->
         <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-2">
@@ -531,9 +616,120 @@
 
       </div>
 
+      <!-- Unified Word-Level Diff View (Hidden by default) -->
+      <div id="diff-unified-container" class="hidden rounded-xl border border-indigo-900/50 bg-slate-950/80 p-5 space-y-3">
+        <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-cyan-400 border-b border-slate-800 pb-2">
+          <span><i class="fa-solid fa-code-merge mr-1.5"></i> Unified Word-Level Diff Analysis</span>
+          <div class="flex items-center gap-3 text-[10px] font-mono text-slate-400">
+            <span class="diff-del text-rose-300 line-through">Deleted Phrase</span>
+            <span class="diff-ins text-emerald-300">Corrected Insertion</span>
+          </div>
+        </div>
+        <div id="diff-unified-content" class="text-xs text-slate-200 leading-loose font-mono whitespace-pre-wrap">
+          <span class="text-slate-600">Unified word diff will generate upon analysis.</span>
+        </div>
+      </div>
+
     </div>
 
   </main>
+
+  <!-- ── Neural Engine & API Settings Modal ──────────────────────── -->
+  <div id="settings-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="backdrop-blur-2xl bg-slate-900/90 border border-slate-700/70 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative overflow-hidden">
+      
+      <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 via-indigo-500 to-violet-500"></div>
+
+      <div class="flex items-start justify-between pb-3 border-b border-slate-800">
+        <div>
+          <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-cyan-400"></i>
+            Neural Engine &amp; API Configuration
+          </h3>
+          <p class="text-xs text-slate-400 font-mono mt-0.5">Live Endpoint Connection Testing &amp; Key Vault</p>
+        </div>
+        <button onclick="toggleSettingsModal(false)" class="text-slate-400 hover:text-white p-1 text-base">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="mt-4 space-y-4 text-xs">
+        
+        <!-- Live Endpoint Connectivity Status -->
+        <div class="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-300 uppercase tracking-wider text-[11px]">Live Endpoint Health</span>
+            <button
+              id="btn-ping-models"
+              onclick="testEndpointConnectivity()"
+              class="px-2.5 py-1 rounded bg-indigo-950 hover:bg-indigo-900 border border-indigo-800 text-indigo-300 text-[10px] font-bold"
+            >
+              <i class="fa-solid fa-satellite-dish mr-1"></i> Ping Endpoints
+            </button>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2 text-[11px] font-mono pt-1">
+            <div id="status-box-claude" class="p-2 rounded bg-slate-900 border border-slate-800 flex items-center justify-between">
+              <span>Claude 3.5:</span>
+              <span class="text-slate-500">Unchecked</span>
+            </div>
+            <div id="status-box-groq" class="p-2 rounded bg-slate-900 border border-slate-800 flex items-center justify-between">
+              <span>Groq Llama:</span>
+              <span class="text-slate-500">Unchecked</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Key Input -->
+        <div class="space-y-3">
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-300 mb-1">
+              Anthropic API Key (Claude)
+            </label>
+            <input
+              type="password"
+              id="input-anthropic-key"
+              class="w-full px-3 py-2 rounded-xl glass-input text-xs font-mono"
+              placeholder="sk-ant-api03-..."
+            />
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-300 mb-1">
+              Groq API Key (Llama 3.3 70B)
+            </label>
+            <input
+              type="password"
+              id="input-groq-key"
+              class="w-full px-3 py-2 rounded-xl glass-input text-xs font-mono"
+              placeholder="gsk_..."
+            />
+          </div>
+        </div>
+
+        <p class="text-[10px] text-slate-500">
+          * Keys entered here take effect immediately in runtime memory. If left blank, the FINCH-ZK heuristic consensus validation engine safely evaluates queries.
+        </p>
+
+      </div>
+
+      <div class="mt-5 pt-3 border-t border-slate-800 flex justify-end gap-2">
+        <button
+          onclick="toggleSettingsModal(false)"
+          class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white"
+        >
+          Cancel
+        </button>
+        <button
+          onclick="saveDynamicKeys()"
+          class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-cyan-600 hover:bg-cyan-500 shadow-md shadow-cyan-600/30 transition"
+        >
+          Apply Keys
+        </button>
+      </div>
+
+    </div>
+  </div>
 
   <!-- ── About & Research Team Modal ────────────────────────────── -->
   <div id="about-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
@@ -633,15 +829,81 @@
     let currentBlocks = [];
     let factualityChartInstance = null;
     let latencyChartInstance = null;
+    let taxonomyChartInstance = null;
+    let diffMode = 'split';
 
-    // About Modal toggle
+    // Modals
     function toggleAboutModal(show) {
-      const modal = document.getElementById('about-modal');
-      if (show) {
-        modal.classList.remove('hidden');
+      document.getElementById('about-modal').classList.toggle('hidden', !show);
+    }
+    function toggleSettingsModal(show) {
+      document.getElementById('settings-modal').classList.toggle('hidden', !show);
+    }
+
+    // Toggle Diff Display Mode
+    function setDiffMode(mode) {
+      diffMode = mode;
+      const splitBtn = document.getElementById('btn-diff-split');
+      const unifiedBtn = document.getElementById('btn-diff-unified');
+      const splitBox = document.getElementById('diff-split-container');
+      const unifiedBox = document.getElementById('diff-unified-container');
+
+      if (mode === 'split') {
+        splitBtn.className = 'px-2.5 py-1 rounded-lg font-medium text-cyan-300 bg-slate-900 shadow-sm';
+        unifiedBtn.className = 'px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white';
+        splitBox.classList.remove('hidden');
+        unifiedBox.classList.add('hidden');
       } else {
-        modal.classList.add('hidden');
+        unifiedBtn.className = 'px-2.5 py-1 rounded-lg font-medium text-cyan-300 bg-slate-900 shadow-sm';
+        splitBtn.className = 'px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white';
+        splitBox.classList.add('hidden');
+        unifiedBox.classList.remove('hidden');
       }
+    }
+
+    // Test API connectivity
+    async function testEndpointConnectivity() {
+      const claudeBox = document.getElementById('status-box-claude');
+      const groqBox = document.getElementById('status-box-groq');
+      claudeBox.innerHTML = `<span>Claude 3.5:</span> <span class="text-cyan-400 animate-pulse">Testing...</span>`;
+      groqBox.innerHTML = `<span>Groq Llama:</span> <span class="text-cyan-400 animate-pulse">Testing...</span>`;
+
+      try {
+        const res = await fetch('/api/test-connection', { method: 'POST' });
+        const data = await res.json();
+        
+        // Claude
+        if (data.anthropic && data.anthropic.status === 'connected') {
+          claudeBox.innerHTML = `<span>Claude 3.5:</span> <span class="text-emerald-400 font-bold">Online</span>`;
+        } else {
+          claudeBox.innerHTML = `<span>Claude 3.5:</span> <span class="text-amber-400">Simulated / Fallback</span>`;
+        }
+
+        // Groq
+        if (data.groq && data.groq.status === 'connected') {
+          groqBox.innerHTML = `<span>Groq Llama:</span> <span class="text-emerald-400 font-bold">Online</span>`;
+        } else {
+          groqBox.innerHTML = `<span>Groq Llama:</span> <span class="text-amber-400">Simulated / Fallback</span>`;
+        }
+      } catch (e) {
+        claudeBox.innerHTML = `<span>Claude:</span> <span class="text-rose-400">Error</span>`;
+        groqBox.innerHTML = `<span>Groq:</span> <span class="text-rose-400">Error</span>`;
+      }
+    }
+
+    // Save dynamic keys
+    async function saveDynamicKeys() {
+      const aKey = document.getElementById('input-anthropic-key').value.trim();
+      const gKey = document.getElementById('input-groq-key').value.trim();
+
+      const res = await fetch('/api/settings/keys', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ anthropic_key: aKey, groq_key: gKey })
+      });
+      const data = await res.json();
+      alert(data.message || 'Settings applied.');
+      toggleSettingsModal(false);
     }
 
     // Initialize Chart.js
@@ -656,8 +918,8 @@
             data: [1, 0, 0],
             backgroundColor: ['#10B981', '#F43F5E', '#F59E0B'],
             borderColor: '#111827',
-            borderWidth: 3,
-            hoverOffset: 6
+            borderWidth: 2,
+            hoverOffset: 4
           }]
         },
         options: {
@@ -666,7 +928,7 @@
           plugins: {
             legend: {
               position: 'bottom',
-              labels: { color: '#9CA3AF', font: { size: 11, family: "'Plus Jakarta Sans'" } }
+              labels: { color: '#9CA3AF', font: { size: 10, family: "'Plus Jakarta Sans'" } }
             }
           },
           cutout: '72%'
@@ -678,38 +940,46 @@
       latencyChartInstance = new Chart(ctxLat, {
         type: 'bar',
         data: {
-          labels: ['Segmentation', 'Sampling', 'Evaluation', 'Mitigation'],
+          labels: ['Seg', 'Sampling', 'Eval', 'Mitig'],
           datasets: [{
-            label: 'Latency (seconds)',
-            data: [0.1, 0.4, 0.6, 0.3],
-            backgroundColor: [
-              'rgba(6, 182, 212, 0.7)',
-              'rgba(99, 102, 241, 0.7)',
-              'rgba(139, 92, 246, 0.7)',
-              'rgba(16, 185, 129, 0.7)'
-            ],
-            borderColor: ['#06B6D4', '#6366F1', '#8B5CF6', '#10B981'],
-            borderWidth: 1.5,
-            borderRadius: 6
+            label: 'Sec',
+            data: [0.05, 0.4, 0.6, 0.2],
+            backgroundColor: ['#06B6D4', '#6366F1', '#8B5CF6', '#10B981'],
+            borderRadius: 4
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           scales: {
-            x: {
-              ticks: { color: '#9CA3AF', font: { size: 10 } },
-              grid: { color: 'rgba(255, 255, 255, 0.05)' }
-            },
-            y: {
-              ticks: { color: '#9CA3AF', font: { size: 10 } },
-              grid: { color: 'rgba(255, 255, 255, 0.05)' },
-              beginAtZero: true
-            }
+            x: { ticks: { color: '#9CA3AF', font: { size: 9 } }, grid: { display: false } },
+            y: { ticks: { color: '#9CA3AF', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
           },
-          plugins: {
-            legend: { display: false }
-          }
+          plugins: { legend: { display: false } }
+        }
+      });
+
+      // 3. Taxonomy Breakdown Horizontal Bar Chart
+      const ctxTax = document.getElementById('taxonomyChart').getContext('2d');
+      taxonomyChartInstance = new Chart(ctxTax, {
+        type: 'bar',
+        indexAxis: 'y',
+        data: {
+          labels: ['Numeric', 'Inventive', 'Temporal', 'Entity', 'Sound'],
+          datasets: [{
+            data: [0, 0, 0, 0, 1],
+            backgroundColor: ['#F43F5E', '#FB7185', '#F59E0B', '#C084FC', '#10B981'],
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { ticks: { color: '#9CA3AF', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            y: { ticks: { color: '#9CA3AF', font: { size: 9 } }, grid: { display: false } }
+          },
+          plugins: { legend: { display: false } }
         }
       });
     }
@@ -727,7 +997,60 @@
       });
     }
 
-    // Render evaluated blocks into HTML inspector
+    // Render interactive heatmap
+    function renderHeatmap(blocks) {
+      const container = document.getElementById('heatmap-container');
+      if (!blocks || blocks.length === 0) {
+        container.innerHTML = `<span class="text-slate-600">No sentences to render.</span>`;
+        return;
+      }
+
+      container.innerHTML = blocks.map((b, idx) => {
+        const isContra = b.verdict === 'CONTRADICTION';
+        const isAcc = b.verdict === 'ACCURATE';
+        const bg = isContra 
+          ? 'bg-rose-950/70 text-rose-200 border-b-2 border-rose-500 hover:bg-rose-900/80 cursor-pointer' 
+          : (isAcc ? 'text-slate-200 hover:bg-emerald-950/40 cursor-pointer' : 'text-amber-200 hover:bg-amber-950/40 cursor-pointer');
+
+        return `
+          <span 
+            onclick="scrollToBlock(${idx})"
+            title="${b.verdict}: ${escapeHtml(b.explanation)}" 
+            class="px-1 py-0.5 rounded transition ${bg} mr-1 inline-block"
+          >
+            ${escapeHtml(b.block)}
+          </span>
+        `;
+      }).join(' ');
+    }
+
+    function scrollToBlock(idx) {
+      const target = document.getElementById(`block-card-${idx}`);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        target.classList.add('ring-2', 'ring-cyan-400');
+        setTimeout(() => target.classList.remove('ring-2', 'ring-cyan-400'), 1500);
+      }
+    }
+
+    // Compute simple word-level diff for unified viewer
+    function renderUnifiedWordDiff(original, mitigated, blocks) {
+      const container = document.getElementById('diff-unified-content');
+      
+      let html = '';
+      blocks.forEach(b => {
+        if (b.verdict === 'CONTRADICTION' && b.correction) {
+          html += `<span class="diff-del">${escapeHtml(b.block)}</span> `;
+          html += `<span class="diff-ins">${escapeHtml(b.correction)}</span> `;
+        } else {
+          html += `<span class="text-slate-300">${escapeHtml(b.block)}</span> `;
+        }
+      });
+
+      container.innerHTML = html || escapeHtml(mitigated);
+    }
+
+    // Render evaluated blocks into HTML inspector with consensus matrix
     function renderBlockInspector(blocks) {
       currentBlocks = blocks;
       const container = document.getElementById('blocks-container');
@@ -746,9 +1069,10 @@
         const badgeClass = isContra ? 'badge-contradiction' : (isAcc ? 'badge-accurate' : 'badge-neutral');
         const icon = isContra ? 'fa-solid fa-triangle-exclamation' : (isAcc ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-pause');
         const borderColor = isContra ? 'border-rose-900/60 bg-rose-950/20' : (isAcc ? 'border-slate-800 bg-slate-900/50' : 'border-amber-900/40 bg-amber-950/20');
+        const con = b.consensus || {};
 
         return `
-          <div class="block-card-item rounded-xl border ${borderColor} p-4 transition-all" data-verdict="${b.verdict}">
+          <div id="block-card-${idx}" class="block-card-item rounded-xl border ${borderColor} p-4 transition-all" data-verdict="${b.verdict}">
             <div class="flex items-start justify-between gap-3">
               <div class="flex items-start gap-3">
                 <span class="w-6 h-6 rounded-md bg-slate-800 text-slate-400 font-mono text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">
@@ -756,7 +1080,20 @@
                 </span>
                 <div class="space-y-1">
                   <p class="text-xs font-mono text-slate-200 leading-relaxed">${escapeHtml(b.block)}</p>
-                  <p class="text-[11px] text-slate-400 flex items-center gap-1.5 pt-1">
+                  
+                  <div class="flex items-center gap-3 text-[10px] text-slate-400 pt-1 flex-wrap">
+                    <span class="flex items-center gap-1">
+                      <i class="fa-solid fa-tag text-indigo-400"></i>
+                      <span class="text-slate-300 font-medium">${escapeHtml(b.taxonomy || 'Standard Domain Fact')}</span>
+                    </span>
+                    ${b.block_hash ? `
+                      <span class="font-mono text-slate-500 text-[9px] bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">
+                        HASH: ${b.block_hash}
+                      </span>
+                    ` : ''}
+                  </div>
+
+                  <p class="text-[11px] text-slate-400 flex items-center gap-1.5 pt-0.5">
                     <i class="fa-solid fa-circle-info text-slate-500 text-[10px]"></i>
                     <span>${escapeHtml(b.explanation || 'Verified consistent with consensus knowledge.')}</span>
                   </p>
@@ -772,6 +1109,34 @@
                 <div class="text-[10px] text-slate-500 font-mono mt-1">
                   Confidence: <span class="text-slate-300 font-bold">${Math.round((b.confidence || 0.9) * 100)}%</span>
                 </div>
+              </div>
+            </div>
+
+            <!-- Multi-Model Consensus Voting Matrix Table -->
+            <div class="mt-3 pt-2.5 border-t border-slate-800/80 text-[10px] font-mono grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+              <div class="p-1.5 rounded bg-slate-950/60 border border-slate-800">
+                <span class="text-slate-500 block text-[9px]">Claude (Ident)</span>
+                <span class="${con.claude_identity === 'SUPPORT' ? 'text-emerald-400' : (con.claude_identity === 'CONTRADICT' ? 'text-rose-400' : 'text-amber-400')} font-bold">
+                  ${con.claude_identity || 'SUPPORT'}
+                </span>
+              </div>
+              <div class="p-1.5 rounded bg-slate-950/60 border border-slate-800">
+                <span class="text-slate-500 block text-[9px]">Claude (CoT)</span>
+                <span class="${con.claude_cot === 'SUPPORT' ? 'text-emerald-400' : (con.claude_cot === 'CONTRADICT' ? 'text-rose-400' : 'text-amber-400')} font-bold">
+                  ${con.claude_cot || 'SUPPORT'}
+                </span>
+              </div>
+              <div class="p-1.5 rounded bg-slate-950/60 border border-slate-800">
+                <span class="text-slate-500 block text-[9px]">Llama (Ident)</span>
+                <span class="${con.llama_identity === 'SUPPORT' ? 'text-emerald-400' : (con.llama_identity === 'CONTRADICT' ? 'text-rose-400' : 'text-amber-400')} font-bold">
+                  ${con.llama_identity || 'SUPPORT'}
+                </span>
+              </div>
+              <div class="p-1.5 rounded bg-slate-950/60 border border-slate-800">
+                <span class="text-slate-500 block text-[9px]">Llama (Break-Down)</span>
+                <span class="${con.llama_breakdown === 'SUPPORT' ? 'text-emerald-400' : (con.llama_breakdown === 'CONTRADICT' ? 'text-rose-400' : 'text-amber-400')} font-bold">
+                  ${con.llama_breakdown || 'SUPPORT'}
+                </span>
               </div>
             </div>
 
@@ -824,6 +1189,16 @@
       document.getElementById('stat-samples-count').innerText = m.samples_used;
       document.getElementById('stat-token-count').innerText = '~' + m.estimated_tokens;
 
+      // ZK Hero Badge
+      if (data.zk_proof) {
+        const zkBadge = document.getElementById('zk-hero-badge');
+        const tokenSpan = document.getElementById('hero-zk-token');
+        if (zkBadge && tokenSpan) {
+          zkBadge.classList.remove('hidden');
+          tokenSpan.innerText = data.zk_proof.verification_token;
+        }
+      }
+
       // Update Chart 1: Factuality
       if (factualityChartInstance) {
         factualityChartInstance.data.datasets[0].data = [
@@ -845,13 +1220,26 @@
         latencyChartInstance.update();
       }
 
+      // Update Chart 3: Taxonomy Breakdown
+      if (taxonomyChartInstance && m.taxonomy_breakdown) {
+        const tb = m.taxonomy_breakdown;
+        taxonomyChartInstance.data.datasets[0].data = [
+          tb['Numeric / Quantity Discrepancy'] || 0,
+          tb['Inventive / Fabricated Achievement'] || 0,
+          tb['Temporal / Chronological Error'] || 0,
+          tb['Entity / Attribution Hallucination'] || 0,
+          m.accurate_count || 1
+        ];
+        taxonomyChartInstance.update();
+      }
+
       // Update Diff Panels
       document.getElementById('diff-original-content').innerText = data.target_response;
       document.getElementById('diff-mitigated-content').innerText = data.mitigated_response;
 
-      // Show quick status
-      const pill = document.getElementById('quick-status-pill');
-      if (pill) pill.classList.remove('hidden');
+      // Render Unified Diff & Heatmap
+      renderHeatmap(data.blocks);
+      renderUnifiedWordDiff(data.target_response, data.mitigated_response, data.blocks);
     }
 
     // Handle Form Submit
