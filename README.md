@@ -49,23 +49,26 @@
 
 1. **Cyber Dark Glassmorphic Interface (`#0B0F19`)**:
    - High-contrast neon glowing accents (Cyan, Violet, Emerald, Rose), floating 3D glass cards (`backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 shadow-2xl`), and interactive hover animations.
-2. **Atomic Sentence Chunking (PySBD Engine)**:
-   - High-precision sentence segmentation breaking candidate responses into atomic factual statements without splitting honorifics, abbreviations, or numerical expressions.
-3. **Automated Multi-Prompt Variations**:
-   - Generates 4 automated variations per query: `Identity`, `Zero-shot CoT` ("step-by-step"), `Long Answer`, and `Break-Down`.
-4. **Multi-Model Consensus Agreement Matrix**:
-   - Visual voting grid tracking support/contradiction across Claude 3.5 Sonnet and Groq Llama 3.3 70B variations.
-5. **Interactive Document Factuality Heatmap**:
-   - Real-time sentence highlighting overlay directly on the text (Green = Verified, Red = Contradiction) with clickable scroll-to-inspector links.
-6. **Word-Level Visual Diff (Unified vs. Side-by-Side)**:
-   - Dual-mode visualizer comparing the original candidate output against the reflection-synthesized final output with highlighted deletions and insertions.
-7. **Hallucination Taxonomy Classifier**:
-   - Neuro-symbolic classification into academic categories: *Numeric / Quantity Discrepancy*, *Inventive / Fabricated Achievement*, *Temporal / Chronological Error*, and *Entity / Attribution Hallucination*.
-8. **Cryptographic ZK Merkle Proof & Printable Certificate**:
-   - Computes deterministic SHA-256 Merkle root hashes and verification tokens (`FINCH-ZK-2026-XXXX`).
-   - Generates an official, printable **Academic Verification Certificate** (`/report/audit`) with guide sign-off blocks.
-9. **5 Diverse Domain Benchmark Suite**:
-   - Pre-loaded interactive benchmarks for Inventions (Alexander Graham Bell), Space Flight (Apollo 11), Modern Physics (Einstein Nobel Prize), European Geography, and US History.
+2. **🎙️ Voice Dictation & Audio Narration (Web Speech Engine)**:
+   - Live microphone voice-to-text input for queries and audio text-to-speech readout of the mitigated, fact-checked truth.
+3. **📂 Batch Document & Transcript Importer (`.txt`, `.json`, `.csv`)**:
+   - Ingest entire transcripts, articles, or benchmark files directly into the verification pipeline.
+4. **⏳ Dynamic Time-Aware Fact Checking (Freshness Guard)**:
+   - Detects temporal anchors (e.g. 2021 vs 2026), dynamic positions (CEOs, presidents, market leaders), and flags stale retrieval chunks before rendering verdicts.
+5. **🕸️ Entity-Relation Knowledge Graph Visualizer**:
+   - Interactive HTML5 canvas rendering verified entities and relation edges (Green = Verified Fact, Red = Contradicted Hallucination).
+6. **🥊 Adversarial Hallucination Red-Teaming Studio**:
+   - Interactive perturbator testing detector recall and precision via *Entity Swapping*, *Quantity Jitter*, and *Temporal Drift* (year 2099 violation).
+7. **👥 Multi-User Collaborative Dispute & Annotation Workspace**:
+   - Human-in-the-loop audit workspace allowing human reviewers to override verdicts, leave calibration notes, and build an active-learning audit log.
+8. **📜 Regulatory Compliance & EU AI Act Governance Suite**:
+   - SOC2 audit readiness telemetry, EU AI Act Article 52 Minimal Risk transparency tiering, and 90-day data retention tracking.
+9. **🔧 Auto-Remediation 3-Tier Candidate Revisions Engine**:
+   - Automatically generates 3 candidate fixes per contradiction: *Conservative Consensus*, *Concise Executive Summary*, and *Explanatory & Contextualized* with a single-click "Apply Revision" button.
+10. **🔒 Cryptographic ZK Merkle Proof & JSON-LD On-Chain Trust Seal**:
+   - Computes deterministic SHA-256 Merkle root hashes, verification tokens (`FINCH-ZK-2026-XXXX`), JSON-LD verifiable credential receipts, and printable academic certificates with guide sign-off.
+11. **💻 Developer API Playground**:
+   - Interactive in-app sandbox with copyable `curl`, Python, and JavaScript snippets.
 
 ---
 

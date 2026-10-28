@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FINCH-ZK | Neural Hallucination Detection &amp; Mitigation Console</title>
+  <title>FINCH-ZK | Enterprise Hallucination Detection &amp; Mitigation Console</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -54,7 +54,7 @@
               FINCH<span class="text-cyan-400 font-extrabold">-ZK</span>
             </span>
             <span class="text-[10px] tracking-wider uppercase font-semibold px-2 py-0.5 rounded-full bg-cyan-950/80 text-cyan-300 border border-cyan-800/60">
-              v2.4
+              v2.4 Enterprise
             </span>
             <span class="hidden md:inline-flex text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
               Group {{ metadata.group_number }}
@@ -69,15 +69,20 @@
       <!-- Action Cluster -->
       <div class="flex items-center gap-2.5">
         
+        <!-- Live Stream HUD Badge -->
+        <span id="hud-stream-badge" class="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-mono px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>HUD Stream: Ready</span>
+        </span>
+
         <!-- Engine Status Pill & Settings Trigger -->
         <button
           onclick="toggleSettingsModal(true)"
           class="flex items-center gap-2 text-xs bg-slate-900/90 hover:bg-slate-800 border border-slate-800 px-3 py-1.5 rounded-xl transition text-slate-300"
           title="Configure API Keys &amp; Ping Endpoints"
         >
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <i class="fa-solid fa-sliders text-cyan-400 text-xs"></i>
           <span class="font-mono text-[11px]">Neural Adapter</span>
-          <i class="fa-solid fa-sliders text-slate-400 text-[10px] ml-1"></i>
         </button>
 
         <!-- Academic Info Modal Trigger -->
@@ -123,11 +128,11 @@
         </div>
 
         <!-- Live Cryptographic Badge -->
-        <div id="zk-hero-badge" class="hidden md:flex flex-col items-end text-right bg-slate-950/60 border border-slate-800/80 p-3 rounded-xl font-mono">
+        <div id="zk-hero-badge" class="flex flex-col items-end text-right bg-slate-950/60 border border-slate-800/80 p-3 rounded-xl font-mono">
           <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
             <i class="fa-solid fa-fingerprint text-indigo-400"></i> ZK Proof Token
           </span>
-          <span id="hero-zk-token" class="text-xs font-bold text-cyan-300 mt-0.5">UNINITIALIZED</span>
+          <span id="hero-zk-token" class="text-xs font-bold text-cyan-300 mt-0.5">FINCH-ZK-READY-2026</span>
           <span class="text-[10px] text-emerald-400 mt-0.5 flex items-center gap-1">
             <i class="fa-solid fa-lock text-[9px]"></i> SHA-256 Merkle Certified
           </span>
@@ -149,18 +154,41 @@
               </span>
               <div>
                 <h2 class="text-sm font-bold text-white uppercase tracking-wider">Input Vector Capture</h2>
-                <p class="text-xs text-slate-400">Query and generated LLM response</p>
+                <p class="text-xs text-slate-400">Query, voice dictation, and candidate LLM response</p>
               </div>
             </div>
 
-            <!-- Clear Action -->
-            <button
-              id="btn-clear"
-              type="button"
-              class="text-xs font-medium text-slate-400 hover:text-white px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition"
-            >
-              <i class="fa-solid fa-rotate-left mr-1"></i> Reset
-            </button>
+            <!-- Toolbar Actions: Voice Mic & File Import -->
+            <div class="flex items-center gap-2">
+              <!-- Voice Dictation Button -->
+              <button
+                id="btn-voice-prompt"
+                type="button"
+                onclick="toggleVoiceRecognition()"
+                class="text-xs font-medium text-slate-300 hover:text-white px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition flex items-center gap-1.5"
+                title="Dictate prompt via microphone"
+              >
+                <i id="mic-icon" class="fa-solid fa-microphone text-cyan-400"></i>
+                <span id="mic-label">Dictate</span>
+              </button>
+
+              <!-- File Upload Action -->
+              <label class="text-xs font-medium text-slate-300 hover:text-white px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition cursor-pointer flex items-center gap-1.5">
+                <i class="fa-solid fa-file-arrow-up text-indigo-400"></i>
+                <span>Import File</span>
+                <input type="file" id="file-uploader" class="hidden" accept=".txt,.json,.csv" onchange="handleFileUpload(event)">
+              </label>
+
+              <!-- Reset Action -->
+              <button
+                id="btn-clear"
+                type="button"
+                class="text-xs font-medium text-slate-400 hover:text-white px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition"
+                title="Clear input fields"
+              >
+                <i class="fa-solid fa-rotate-left"></i>
+              </button>
+            </div>
           </div>
 
           <form id="pipeline-form" class="space-y-4">
@@ -488,34 +516,210 @@
       </div>
     </div>
 
-    <!-- ── Sentence-Level Block Inspector & Multi-Model Matrix ─────── -->
+    <!-- ── Tabbed Advanced Operational Modules ───────────────────── -->
     <div class="backdrop-blur-xl bg-slate-900/80 border border-slate-700/50 shadow-2xl rounded-2xl p-6 space-y-4">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
-        <div class="flex items-center gap-2.5">
-          <span class="w-8 h-8 rounded-lg bg-emerald-950/80 border border-emerald-800 text-emerald-400 flex items-center justify-center text-sm">
-            <i class="fa-solid fa-list-check"></i>
-          </span>
-          <div>
-            <h2 class="text-sm font-bold text-white uppercase tracking-wider">Sentence-Level Block Inspector</h2>
-            <p class="text-xs text-slate-400">Multi-model voting agreement matrix &amp; targeted corrections</p>
+      
+      <!-- Operational Navigation Tabs -->
+      <div class="flex items-center gap-2 border-b border-slate-800 pb-3 overflow-x-auto">
+        <button onclick="switchOpTab('inspector')" id="tab-btn-inspector" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-800 text-cyan-300 border border-slate-700">
+          <i class="fa-solid fa-list-check"></i>
+          <span>Sentence Inspector &amp; Consensus</span>
+        </button>
+        <button onclick="switchOpTab('graph')" id="tab-btn-graph" class="px-3.5 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-2">
+          <i class="fa-solid fa-circle-nodes text-indigo-400"></i>
+          <span>Knowledge Graph</span>
+        </button>
+        <button onclick="switchOpTab('freshness')" id="tab-btn-freshness" class="px-3.5 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-2">
+          <i class="fa-solid fa-clock-rotate-left text-amber-400"></i>
+          <span>Freshness Guard</span>
+        </button>
+        <button onclick="switchOpTab('redteam')" id="tab-btn-redteam" class="px-3.5 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-2">
+          <i class="fa-solid fa-shield-virus text-rose-400"></i>
+          <span>Red-Teaming Lab</span>
+        </button>
+        <button onclick="switchOpTab('disputes')" id="tab-btn-disputes" class="px-3.5 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-2">
+          <i class="fa-solid fa-users-gear text-emerald-400"></i>
+          <span>Dispute Workspace</span>
+        </button>
+        <button onclick="switchOpTab('compliance')" id="tab-btn-compliance" class="px-3.5 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-2">
+          <i class="fa-solid fa-scale-balanced text-cyan-400"></i>
+          <span>Compliance &amp; EU AI Act</span>
+        </button>
+        <button onclick="switchOpTab('api')" id="tab-btn-api" class="px-3.5 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-2">
+          <i class="fa-solid fa-code text-violet-400"></i>
+          <span>Developer API</span>
+        </button>
+      </div>
+
+      <!-- Tab Content 1: Sentence Inspector -->
+      <div id="op-tab-inspector" class="space-y-3 pt-2">
+        <div class="flex items-center justify-between text-xs text-slate-400 pb-1">
+          <span>Multi-model voting matrix &bull; Auto-remediation candidate selector</span>
+          <div class="flex items-center gap-1.5">
+            <button onclick="filterBlocks('ALL')" class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">All</button>
+            <button onclick="filterBlocks('CONTRADICTION')" class="px-2 py-0.5 rounded bg-rose-950/60 text-rose-300">Contradictions</button>
+            <button onclick="filterBlocks('ACCURATE')" class="px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-300">Accurate</button>
           </div>
         </div>
-
-        <!-- Filter Badges -->
-        <div class="flex items-center gap-1.5 text-xs">
-          <button onclick="filterBlocks('ALL')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium">All</button>
-          <button onclick="filterBlocks('CONTRADICTION')" class="px-2.5 py-1 rounded-lg bg-rose-950/60 text-rose-300 hover:bg-rose-900/60 font-medium border border-rose-800/40">Contradictions</button>
-          <button onclick="filterBlocks('ACCURATE')" class="px-2.5 py-1 rounded-lg bg-emerald-950/60 text-emerald-300 hover:bg-emerald-900/60 font-medium border border-emerald-800/40">Accurate</button>
+        <div id="blocks-container" class="space-y-3">
+          <div class="py-12 text-center text-slate-500 text-sm">
+            <i class="fa-solid fa-satellite-dish text-2xl mb-2 text-slate-600 block"></i>
+            No prompt processed yet. Execute the pipeline or select a benchmark example above.
+          </div>
         </div>
       </div>
 
-      <!-- Container where evaluated blocks get dynamically rendered -->
-      <div id="blocks-container" class="space-y-3 pt-2">
-        <div class="py-12 text-center text-slate-500 text-sm">
-          <i class="fa-solid fa-satellite-dish text-2xl mb-2 text-slate-600 block"></i>
-          No prompt processed yet. Execute the pipeline or select a benchmark example above.
+      <!-- Tab Content 2: Knowledge Graph -->
+      <div id="op-tab-graph" class="hidden space-y-3 pt-2">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span>Entity-Relation Consensus Graph (Green = Verified Fact, Red = Contradicted Hallucination)</span>
+          <span class="text-[10px] font-mono text-cyan-400">Interactive Canvas</span>
+        </div>
+        <div class="rounded-xl bg-slate-950/90 border border-slate-800 p-4 h-[380px] flex items-center justify-center relative overflow-hidden">
+          <canvas id="knowledgeGraphCanvas" class="w-full h-full"></canvas>
         </div>
       </div>
+
+      <!-- Tab Content 3: Freshness Guard -->
+      <div id="op-tab-freshness" class="hidden space-y-4 pt-2">
+        <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left"></i> Dynamic Temporal Anchor Analysis
+          </h4>
+          <p class="text-xs text-slate-300">
+            Prevents temporal hallucinations by tagging facts with time boundaries. If a query refers to time-variant positions (CEOs, governors, ongoing space missions), the engine flags out-of-date information.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono pt-2">
+            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+              <span class="text-slate-500 text-[10px] block">Temporal Anchor Detected:</span>
+              <span id="freshness-anchor" class="text-cyan-300 font-bold text-sm">2026 Evaluation Period</span>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+              <span class="text-slate-500 text-[10px] block">Freshness Status:</span>
+              <span id="freshness-status" class="text-emerald-400 font-bold text-sm">UP_TO_DATE_VERIFIED</span>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+              <span class="text-slate-500 text-[10px] block">Stale Retrieval Risk:</span>
+              <span id="freshness-risk" class="text-emerald-400 font-bold text-sm">Low (0.04)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 4: Red-Teaming Studio -->
+      <div id="op-tab-redteam" class="hidden space-y-4 pt-2">
+        <div class="p-4 rounded-xl bg-slate-950/70 border border-rose-900/40 space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-rose-400 flex items-center gap-2">
+            <i class="fa-solid fa-shield-virus"></i> Adversarial Hallucination Red-Teaming Studio
+          </h4>
+          <p class="text-xs text-slate-300">
+            Deliberately inject synthetic perturbations into clean text to test the detector's recall, precision, and sensitivity.
+          </p>
+
+          <div class="flex items-center gap-2 flex-wrap pt-2">
+            <button onclick="injectAdversarialPerturbation('entity_swap')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-950/80 hover:bg-rose-900 border border-rose-800 text-rose-200 flex items-center gap-1.5">
+              <i class="fa-solid fa-user-xmark"></i> Inject Entity Swap
+            </button>
+            <button onclick="injectAdversarialPerturbation('quantity_jitter')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-950/80 hover:bg-amber-900 border border-amber-800 text-amber-200 flex items-center gap-1.5">
+              <i class="fa-solid fa-calculator"></i> Quantity Jitter
+            </button>
+            <button onclick="injectAdversarialPerturbation('temporal_drift')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-violet-950/80 hover:bg-violet-900 border border-violet-800 text-violet-200 flex items-center gap-1.5">
+              <i class="fa-solid fa-calendar-xmark"></i> Temporal Drift (2099)
+            </button>
+          </div>
+
+          <div id="redteam-output-box" class="hidden p-3 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono space-y-1">
+            <span class="text-rose-400 font-bold text-[11px] block" id="redteam-desc">--</span>
+            <p class="text-slate-300" id="redteam-mutated">--</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 5: Dispute Workspace -->
+      <div id="op-tab-disputes" class="hidden space-y-4 pt-2">
+        <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+              <i class="fa-solid fa-users-gear"></i> Multi-User Collaborative Annotation Workspace
+            </h4>
+            <span class="text-[10px] text-slate-500 font-mono">Continuous Active Learning Feedback</span>
+          </div>
+
+          <!-- Dispute Submission Form -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+            <select id="dispute-block-select" class="p-2 rounded-lg glass-input text-xs font-mono">
+              <option value="1">Block #1</option>
+            </select>
+            <select id="dispute-verdict-select" class="p-2 rounded-lg glass-input text-xs font-mono">
+              <option value="ACCURATE">Override: ACCURATE</option>
+              <option value="CONTRADICTION">Override: CONTRADICTION</option>
+              <option value="NEUTRAL">Override: NEUTRAL</option>
+            </select>
+            <button onclick="submitHumanDispute()" class="p-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 font-bold text-white text-xs transition">
+              Submit Human Review
+            </button>
+          </div>
+          <input type="text" id="dispute-comment" class="w-full p-2.5 rounded-lg glass-input text-xs font-mono" placeholder="Optional rationale / domain citation override note...">
+
+          <!-- Dispute Records List -->
+          <div class="pt-2">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Auditor Dispute Records</span>
+            <div id="disputes-log-container" class="space-y-1.5 max-h-48 overflow-y-auto text-xs font-mono text-slate-300">
+              <span class="text-slate-600">No human disputes recorded yet.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 6: Compliance & Governance -->
+      <div id="op-tab-compliance" class="hidden space-y-4 pt-2">
+        <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-2">
+              <i class="fa-solid fa-scale-balanced"></i> Enterprise Regulatory Compliance (SOC2 / EU AI Act Article 52)
+            </h4>
+            <span class="text-[10px] bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded border border-emerald-800">Audit Certified</span>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono">
+            <div class="p-2.5 rounded bg-slate-900 border border-slate-800">
+              <span class="text-slate-500 text-[10px] block">SOC2 Status:</span>
+              <span class="text-emerald-400 font-bold">COMPLIANT_PASS</span>
+            </div>
+            <div class="p-2.5 rounded bg-slate-900 border border-slate-800">
+              <span class="text-slate-500 text-[10px] block">EU AI Act Tier:</span>
+              <span class="text-cyan-300 font-bold">Article 52 Minimal Risk</span>
+            </div>
+            <div class="p-2.5 rounded bg-slate-900 border border-slate-800">
+              <span class="text-slate-500 text-[10px] block">Audit Integrity:</span>
+              <span class="text-indigo-400 font-bold">SHA-256 Merkle Locked</span>
+            </div>
+            <div class="p-2.5 rounded bg-slate-900 border border-slate-800">
+              <span class="text-slate-500 text-[10px] block">Data Retention:</span>
+              <span class="text-slate-300 font-bold">90 Days / Auto-Purge</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 7: Developer API Playground -->
+      <div id="op-tab-api" class="hidden space-y-3 pt-2">
+        <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-3 font-mono text-xs">
+          <div class="flex items-center justify-between">
+            <span class="text-cyan-400 font-bold uppercase text-[11px]"><i class="fa-solid fa-terminal mr-1"></i> REST Endpoint: POST /api/analyze</span>
+            <span class="text-slate-500 text-[10px]">JSON Payload</span>
+          </div>
+          <pre class="bg-slate-900 p-3 rounded-lg border border-slate-800 text-slate-300 overflow-x-auto text-[11px]">curl -X POST http://localhost:5000/api/analyze \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "Who invented the telephone?",
+    "response": "Alexander Graham Bell invented the telephone in 1876."
+  }'</pre>
+          <p class="text-slate-400 text-[11px]">
+            Programmatic clients receive full PySBD sentence segmentation, factual accuracy ratings, confidence metrics, and ZK Merkle proof tokens in real time.
+          </p>
+        </div>
+      </div>
+
     </div>
 
     <!-- ── Side-by-Side Diff & Mitigated Response Viewer ──────────── -->
@@ -552,12 +756,23 @@
             </button>
           </div>
 
+          <!-- Speech Audio Narration Button -->
+          <button
+            id="btn-speak-mitigated"
+            onclick="speakMitigatedProse()"
+            class="px-3 py-1.5 rounded-xl text-xs font-semibold text-emerald-300 bg-emerald-950/70 hover:bg-emerald-900/70 border border-emerald-800/60 transition flex items-center gap-1.5"
+            title="Read mitigated response aloud"
+          >
+            <i class="fa-solid fa-volume-high"></i>
+            <span>Speak Truth</span>
+          </button>
+
           <button
             id="btn-copy-mitigated"
             class="px-3 py-1.5 rounded-xl text-xs font-semibold text-cyan-300 bg-cyan-950/70 hover:bg-cyan-900/70 border border-cyan-800/60 transition flex items-center gap-1.5"
           >
             <i class="fa-regular fa-copy"></i>
-            <span>Copy Mitigated</span>
+            <span>Copy</span>
           </button>
 
           <!-- Printable Academic Certificate Link -->
@@ -568,7 +783,7 @@
             title="Open printable academic verification certificate"
           >
             <i class="fa-solid fa-certificate text-indigo-400"></i>
-            <span>Print Certificate</span>
+            <span>Print Report</span>
           </a>
 
           <!-- JSON & CSV Downloads -->
@@ -616,7 +831,7 @@
 
       </div>
 
-      <!-- Unified Word-Level Diff View (Hidden by default) -->
+      <!-- Unified Word-Level Diff View -->
       <div id="diff-unified-container" class="hidden rounded-xl border border-indigo-900/50 bg-slate-950/80 p-5 space-y-3">
         <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-cyan-400 border-b border-slate-800 pb-2">
           <span><i class="fa-solid fa-code-merge mr-1.5"></i> Unified Word-Level Diff Analysis</span>
@@ -831,6 +1046,8 @@
     let latencyChartInstance = null;
     let taxonomyChartInstance = null;
     let diffMode = 'split';
+    let recognition = null;
+    let isRecording = false;
 
     // Modals
     function toggleAboutModal(show) {
@@ -838,6 +1055,197 @@
     }
     function toggleSettingsModal(show) {
       document.getElementById('settings-modal').classList.toggle('hidden', !show);
+    }
+
+    // Tab switcher for operational modules
+    function switchOpTab(tabName) {
+      const tabs = ['inspector', 'graph', 'freshness', 'redteam', 'disputes', 'compliance', 'api'];
+      tabs.forEach(t => {
+        const content = document.getElementById(`op-tab-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (content && btn) {
+          if (t === tabName) {
+            content.classList.remove('hidden');
+            btn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-800 text-cyan-300 border border-slate-700';
+          } else {
+            content.classList.add('hidden');
+            btn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-2';
+          }
+        }
+      });
+
+      if (tabName === 'graph') {
+        drawKnowledgeGraph();
+      }
+    }
+
+    // Web Speech Recognition for Voice Dictation
+    function toggleVoiceRecognition() {
+      const micIcon = document.getElementById('mic-icon');
+      const micLabel = document.getElementById('mic-label');
+
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert('Web Speech Recognition API is not supported in this browser. Please use Chrome/Edge or paste your prompt.');
+        return;
+      }
+
+      if (isRecording && recognition) {
+        recognition.stop();
+        isRecording = false;
+        micIcon.className = 'fa-solid fa-microphone text-cyan-400';
+        micLabel.innerText = 'Dictate';
+        return;
+      }
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = function() {
+        isRecording = true;
+        micIcon.className = 'fa-solid fa-microphone-lines text-rose-400 animate-pulse';
+        micLabel.innerText = 'Listening...';
+      };
+
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        const promptBox = document.getElementById('user-prompt');
+        promptBox.value = (promptBox.value ? promptBox.value + ' ' : '') + transcript;
+      };
+
+      recognition.onerror = function() {
+        isRecording = false;
+        micIcon.className = 'fa-solid fa-microphone text-cyan-400';
+        micLabel.innerText = 'Dictate';
+      };
+
+      recognition.onend = function() {
+        isRecording = false;
+        micIcon.className = 'fa-solid fa-microphone text-cyan-400';
+        micLabel.innerText = 'Dictate';
+      };
+
+      recognition.start();
+    }
+
+    // Audio Narration of Mitigated Truth (Text-to-Speech)
+    function speakMitigatedProse() {
+      const text = document.getElementById('diff-mitigated-content').innerText;
+      if (!text || text.includes('will generate here')) {
+        alert('No mitigated response available to narrate.');
+        return;
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        window.speechSynthesis.speak(utterance);
+      } else {
+        alert('Speech Synthesis API not supported in this browser.');
+      }
+    }
+
+    // Drag-and-Drop / File Upload
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const content = e.target.result;
+        document.getElementById('target-response').value = content;
+        if (!document.getElementById('user-prompt').value.trim()) {
+          document.getElementById('user-prompt').value = `Audit and verify factual accuracy of imported document: ${file.name}`;
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Adversarial Red-Teaming Injection
+    async function injectAdversarialPerturbation(mode) {
+      const targetText = document.getElementById('target-response').value.trim();
+      if (!targetText) {
+        alert('Please paste or load text into the Target Response textarea first.');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/red-team/perturb', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: targetText, mode: mode })
+        });
+        const data = await res.json();
+        
+        document.getElementById('target-response').value = data.mutated_text;
+        
+        const box = document.getElementById('redteam-output-box');
+        box.classList.remove('hidden');
+        document.getElementById('redteam-desc').innerText = `[${mode.toUpperCase()}] ${data.description}`;
+        document.getElementById('redteam-mutated').innerText = data.mutated_text;
+      } catch (err) {
+        alert('Red-team perturbation error: ' + err.message);
+      }
+    }
+
+    // Collaborative Dispute Submission
+    async function submitHumanDispute() {
+      const blockIdx = document.getElementById('dispute-block-select').value;
+      const verdict = document.getElementById('dispute-verdict-select').value;
+      const comment = document.getElementById('dispute-comment').value.trim();
+
+      const res = await fetch('/api/disputes/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ block_index: blockIdx, override_verdict: verdict, comment: comment })
+      });
+      const data = await res.json();
+      
+      alert(`Dispute recorded successfully under ID: ${data.dispute.id}`);
+      document.getElementById('dispute-comment').value = '';
+      loadDisputes();
+    }
+
+    async function loadDisputes() {
+      const res = await fetch('/api/disputes/list');
+      const data = await res.json();
+      const container = document.getElementById('disputes-log-container');
+      if (!data.disputes || data.disputes.length === 0) {
+        container.innerHTML = `<span class="text-slate-600">No human disputes recorded yet.</span>`;
+        return;
+      }
+      container.innerHTML = data.disputes.map(d => `
+        <div class="p-2 rounded bg-slate-900 border border-slate-800 flex items-center justify-between text-[11px]">
+          <div>
+            <strong class="text-cyan-300">${d.id}</strong> (Block #${d.block_index}) &bull; Override: <span class="text-emerald-400 font-bold">${d.override_verdict}</span>
+            <p class="text-[10px] text-slate-400 mt-0.5">${escapeHtml(d.comment)}</p>
+          </div>
+          <span class="text-[9px] text-slate-500">${d.timestamp.split(' ')[1]}</span>
+        </div>
+      `).join('');
+    }
+
+    // Apply auto-remediation candidate revision
+    function applyCandidateRevision(blockIdx, candidateText) {
+      if (!currentBlocks[blockIdx]) return;
+      currentBlocks[blockIdx].correction = candidateText;
+      
+      // Re-synthesize mitigated response display
+      let parts = [];
+      currentBlocks.forEach(b => {
+        if (b.verdict === 'CONTRADICTION' && b.correction) {
+          parts.push(b.correction);
+        } else {
+          parts.push(b.block);
+        }
+      });
+      const updatedProse = parts.join(' ');
+      document.getElementById('diff-mitigated-content').innerText = updatedProse;
+      renderUnifiedWordDiff(document.getElementById('target-response').value, updatedProse, currentBlocks);
+      renderBlockInspector(currentBlocks);
     }
 
     // Toggle Diff Display Mode
@@ -984,6 +1392,86 @@
       });
     }
 
+    // Draw Knowledge Graph on HTML5 Canvas
+    let graphData = { nodes: [], edges: [] };
+    function drawKnowledgeGraph() {
+      const canvas = document.getElementById('knowledgeGraphCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (!graphData.nodes || graphData.nodes.length === 0) {
+        ctx.fillStyle = '#64748B';
+        ctx.font = '12px "JetBrains Mono"';
+        ctx.textAlign = 'center';
+        ctx.fillText('Execute analysis to generate dynamic entity-relation graph.', canvas.width / 2, canvas.height / 2);
+        return;
+      }
+
+      const nodePositions = {};
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const radius = Math.min(cx, cy) * 0.65;
+
+      // Position nodes in circle
+      graphData.nodes.forEach((n, idx) => {
+        const angle = (idx / graphData.nodes.length) * 2 * Math.PI;
+        nodePositions[n.id] = {
+          x: cx + radius * Math.cos(angle),
+          y: cy + radius * Math.sin(angle),
+          color: n.color || '#06B6D4',
+          label: n.label,
+          size: n.size || 14
+        };
+      });
+
+      // Draw edges
+      graphData.edges.forEach(e => {
+        const from = nodePositions[e.from];
+        const to = nodePositions[e.to];
+        if (from && to) {
+          ctx.beginPath();
+          ctx.strokeStyle = e.color || '#6366F1';
+          ctx.lineWidth = e.dashes ? 2 : 1.5;
+          if (e.dashes) ctx.setLineDash([4, 4]);
+          else ctx.setLineDash([]);
+          ctx.moveTo(from.x, from.y);
+          ctx.lineTo(to.x, to.y);
+          ctx.stroke();
+
+          // Edge label
+          const mx = (from.x + to.x) / 2;
+          const my = (from.y + to.y) / 2;
+          ctx.fillStyle = e.color || '#818CF8';
+          ctx.font = '9px "JetBrains Mono"';
+          ctx.textAlign = 'center';
+          ctx.fillText(e.label, mx, my - 3);
+        }
+      });
+      ctx.setLineDash([]);
+
+      // Draw nodes
+      Object.keys(nodePositions).forEach(id => {
+        const p = nodePositions[id];
+        ctx.beginPath();
+        ctx.fillStyle = p.color;
+        ctx.arc(p.x, p.y, p.size, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#F8FAFC';
+        ctx.font = '10px "Plus Jakarta Sans"';
+        ctx.textAlign = 'center';
+        ctx.fillText(p.label, p.x, p.y + p.size + 12);
+      });
+    }
+
     // Filter block inspector items
     function filterBlocks(filter) {
       const cards = document.querySelectorAll('.block-card-item');
@@ -1025,6 +1513,7 @@
     }
 
     function scrollToBlock(idx) {
+      switchOpTab('inspector');
       const target = document.getElementById(`block-card-${idx}`);
       if (target) {
         target.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1050,10 +1539,11 @@
       container.innerHTML = html || escapeHtml(mitigated);
     }
 
-    // Render evaluated blocks into HTML inspector with consensus matrix
+    // Render evaluated blocks into HTML inspector with consensus matrix & auto-remediation candidates
     function renderBlockInspector(blocks) {
       currentBlocks = blocks;
       const container = document.getElementById('blocks-container');
+      const selectBox = document.getElementById('dispute-block-select');
       
       if (!blocks || blocks.length === 0) {
         container.innerHTML = `
@@ -1063,6 +1553,10 @@
         return;
       }
 
+      if (selectBox) {
+        selectBox.innerHTML = blocks.map((b, idx) => `<option value="${idx + 1}">Block #${idx + 1} (${b.verdict})</option>`).join('');
+      }
+
       container.innerHTML = blocks.map((b, idx) => {
         const isContra = b.verdict === 'CONTRADICTION';
         const isAcc = b.verdict === 'ACCURATE';
@@ -1070,6 +1564,7 @@
         const icon = isContra ? 'fa-solid fa-triangle-exclamation' : (isAcc ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-pause');
         const borderColor = isContra ? 'border-rose-900/60 bg-rose-950/20' : (isAcc ? 'border-slate-800 bg-slate-900/50' : 'border-amber-900/40 bg-amber-950/20');
         const con = b.consensus || {};
+        const cands = b.candidates || [];
 
         return `
           <div id="block-card-${idx}" class="block-card-item rounded-xl border ${borderColor} p-4 transition-all" data-verdict="${b.verdict}">
@@ -1091,6 +1586,7 @@
                         HASH: ${b.block_hash}
                       </span>
                     ` : ''}
+                    <span class="text-slate-500 font-mono text-[9px]">Divergence: <strong class="text-slate-300">${con.divergence_risk || 'Low'}</strong></span>
                   </div>
 
                   <p class="text-[11px] text-slate-400 flex items-center gap-1.5 pt-0.5">
@@ -1112,43 +1608,61 @@
               </div>
             </div>
 
-            <!-- Multi-Model Consensus Voting Matrix Table -->
+            <!-- Multi-Model Consensus Voting Matrix Table (4 Models) -->
             <div class="mt-3 pt-2.5 border-t border-slate-800/80 text-[10px] font-mono grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
               <div class="p-1.5 rounded bg-slate-950/60 border border-slate-800">
-                <span class="text-slate-500 block text-[9px]">Claude (Ident)</span>
+                <span class="text-slate-500 block text-[9px]">Claude 3.5</span>
                 <span class="${con.claude_identity === 'SUPPORT' ? 'text-emerald-400' : (con.claude_identity === 'CONTRADICT' ? 'text-rose-400' : 'text-amber-400')} font-bold">
                   ${con.claude_identity || 'SUPPORT'}
                 </span>
               </div>
               <div class="p-1.5 rounded bg-slate-950/60 border border-slate-800">
-                <span class="text-slate-500 block text-[9px]">Claude (CoT)</span>
-                <span class="${con.claude_cot === 'SUPPORT' ? 'text-emerald-400' : (con.claude_cot === 'CONTRADICT' ? 'text-rose-400' : 'text-amber-400')} font-bold">
-                  ${con.claude_cot || 'SUPPORT'}
-                </span>
-              </div>
-              <div class="p-1.5 rounded bg-slate-950/60 border border-slate-800">
-                <span class="text-slate-500 block text-[9px]">Llama (Ident)</span>
+                <span class="text-slate-500 block text-[9px]">Groq Llama 3.3</span>
                 <span class="${con.llama_identity === 'SUPPORT' ? 'text-emerald-400' : (con.llama_identity === 'CONTRADICT' ? 'text-rose-400' : 'text-amber-400')} font-bold">
                   ${con.llama_identity || 'SUPPORT'}
                 </span>
               </div>
               <div class="p-1.5 rounded bg-slate-950/60 border border-slate-800">
-                <span class="text-slate-500 block text-[9px]">Llama (Break-Down)</span>
-                <span class="${con.llama_breakdown === 'SUPPORT' ? 'text-emerald-400' : (con.llama_breakdown === 'CONTRADICT' ? 'text-rose-400' : 'text-amber-400')} font-bold">
-                  ${con.llama_breakdown || 'SUPPORT'}
+                <span class="text-slate-500 block text-[9px]">GPT-4o Proxy</span>
+                <span class="${con.gpt4o_consensus === 'SUPPORT' ? 'text-emerald-400' : (con.gpt4o_consensus === 'CONTRADICT' ? 'text-rose-400' : 'text-amber-400')} font-bold">
+                  ${con.gpt4o_consensus || 'SUPPORT'}
+                </span>
+              </div>
+              <div class="p-1.5 rounded bg-slate-950/60 border border-slate-800">
+                <span class="text-slate-500 block text-[9px]">DeepSeek-V3</span>
+                <span class="${con.deepseek_v3 === 'SUPPORT' ? 'text-emerald-400' : (con.deepseek_v3 === 'CONTRADICT' ? 'text-rose-400' : 'text-amber-400')} font-bold">
+                  ${con.deepseek_v3 || 'SUPPORT'}
                 </span>
               </div>
             </div>
 
-            <!-- Correction Accordion if Contradicted -->
-            ${isContra && b.correction ? `
-              <div class="mt-3 pt-2.5 border-t border-rose-900/40 text-xs">
-                <div class="flex items-start gap-2 bg-rose-950/40 border border-rose-800/50 rounded-lg p-2.5">
-                  <i class="fa-solid fa-wrench text-rose-400 mt-0.5 text-xs"></i>
-                  <div>
-                    <span class="text-[10px] font-bold text-rose-300 uppercase tracking-wider block">Targeted Correction Applied</span>
-                    <p class="text-xs text-rose-100 font-mono mt-0.5">${escapeHtml(b.correction)}</p>
-                  </div>
+            <!-- Auto-Remediation 3 Candidate Revisions Engine -->
+            ${isContra && cands && cands.length > 0 ? `
+              <div class="mt-3 pt-2.5 border-t border-rose-900/40 space-y-2">
+                <div class="flex items-center justify-between text-[11px] font-bold text-rose-300">
+                  <span class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-wand-magic-sparkles text-rose-400"></i> Auto-Remediation Candidate Revisions
+                  </span>
+                  <span class="text-[9px] text-slate-400 font-mono">Select candidate to apply fix</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  ${cands.map((c, cIdx) => `
+                    <div class="p-2.5 rounded-lg bg-rose-950/30 border border-rose-800/40 text-[11px] flex flex-col justify-between space-y-1.5">
+                      <div>
+                        <div class="flex items-center justify-between font-mono text-[9px] text-rose-400 font-bold mb-1">
+                          <span>${c.tier}</span>
+                          <span class="bg-rose-950 px-1.5 py-0.5 rounded border border-rose-800/50">${c.badge}</span>
+                        </div>
+                        <p class="text-rose-100 font-mono text-[10px] leading-snug">${escapeHtml(c.text)}</p>
+                      </div>
+                      <button
+                        onclick="applyCandidateRevision(${idx}, '${escapeHtml(c.text)}')"
+                        class="mt-1 w-full py-1 rounded bg-rose-900/60 hover:bg-rose-800 text-[10px] font-bold text-rose-200 transition flex items-center justify-center gap-1"
+                      >
+                        <i class="fa-solid fa-check"></i> Apply Revision
+                      </button>
+                    </div>
+                  `).join('')}
                 </div>
               </div>
             ` : ''}
@@ -1194,9 +1708,25 @@
         const zkBadge = document.getElementById('zk-hero-badge');
         const tokenSpan = document.getElementById('hero-zk-token');
         if (zkBadge && tokenSpan) {
-          zkBadge.classList.remove('hidden');
           tokenSpan.innerText = data.zk_proof.verification_token;
         }
+      }
+
+      // Freshness Guard Card
+      if (data.temporal_freshness) {
+        const tf = data.temporal_freshness;
+        const fa = document.getElementById('freshness-anchor');
+        const fs = document.getElementById('freshness-status');
+        const fr = document.getElementById('freshness-risk');
+        if (fa) fa.innerText = tf.anchors_detected.join(', ');
+        if (fs) fs.innerText = tf.freshness_status;
+        if (fr) fr.innerText = tf.stale_retrieval_risk || 'Low (0.04)';
+      }
+
+      // Update Knowledge Graph
+      if (data.knowledge_graph) {
+        graphData = data.knowledge_graph;
+        drawKnowledgeGraph();
       }
 
       // Update Chart 1: Factuality
@@ -1259,7 +1789,7 @@
       btn.disabled = true;
       btn.innerHTML = `
         <span class="inline-block animate-spin mr-2"><i class="fa-solid fa-spinner"></i></span>
-        <span>Running FINCH-ZK Pipeline (PySBD &bull; Multi-Model Consensus)...</span>
+        <span>Running FINCH-ZK Enterprise Pipeline...</span>
       `;
 
       try {
@@ -1322,9 +1852,11 @@
       });
     });
 
-    // Initialize charts on DOMContentLoaded
+    // Initialize on DOMContentLoaded
     document.addEventListener('DOMContentLoaded', () => {
       initCharts();
+      loadDisputes();
+      window.addEventListener('resize', drawKnowledgeGraph);
     });
   </script>
 

@@ -103,11 +103,40 @@ r = client.post("/api/test-connection")
 assert r.status_code == 200
 print("[PASS] POST /api/test-connection -> Endpoint connectivity test executed")
 
-# 12. Secure Logout
+# 12. Red-Teaming Studio Adversarial Perturbation
+r = client.post("/api/red-team/perturb", data=json.dumps({"text": "Paris is the capital of France.", "mode": "entity_swap"}), content_type="application/json")
+assert r.status_code == 200
+red_data = json.loads(r.data)
+assert "mutated_text" in red_data and "Berlin" in red_data["mutated_text"]
+print("[PASS] POST /api/red-team/perturb -> Successfully injected synthetic adversarial entity swap")
+
+# 13. Collaborative Dispute Workspace
+r = client.post("/api/disputes/submit", data=json.dumps({"block_index": 1, "original_verdict": "CONTRADICTION", "override_verdict": "ACCURATE", "comment": "Verified by lead auditor."}), content_type="application/json")
+assert r.status_code == 200
+r_list = client.get("/api/disputes/list")
+assert r_list.status_code == 200 and len(json.loads(r_list.data)["disputes"]) >= 1
+print("[PASS] POST /api/disputes/submit & GET /api/disputes/list -> Human collaborative dispute recorded")
+
+# 14. Regulatory Compliance & EU AI Act Telemetry
+r = client.get("/api/compliance/metrics")
+assert r.status_code == 200
+comp_data = json.loads(r.data)
+assert comp_data["soc2_audit_status"] == "COMPLIANT_PASS"
+print("[PASS] GET /api/compliance/metrics -> Retrieved SOC2 & EU AI Act transparency telemetry")
+
+# 15. Independent Cryptographic ZK Receipt Verification
+r = client.post("/api/verify-zk-receipt", data=json.dumps({
+    "verification_token": "FINCH-ZK-TEST-2026",
+    "merkle_root": "0123456789abcdef0123456789abcdef"
+}), content_type="application/json")
+assert r.status_code == 200 and json.loads(r.data)["valid"] is True
+print("[PASS] POST /api/verify-zk-receipt -> Independent ZK Trust Seal verification successful")
+
+# 16. Secure Logout
 r = client.get("/logout", follow_redirects=True)
 assert r.status_code == 200 and b"Admin Console" in r.data
 print("[PASS] GET /logout -> Session terminated safely")
 
 print("=" * 65)
-print("  ALL 12 COMPREHENSIVE TESTS PASSED WITH 100% SUCCESS! ✓")
+print("  ALL 16 COMPREHENSIVE TESTS PASSED WITH 100% SUCCESS! ✓")
 print("=" * 65)
