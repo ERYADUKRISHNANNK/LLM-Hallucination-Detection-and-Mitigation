@@ -10,6 +10,7 @@
 [![Groq Llama 3.3](https://img.shields.io/badge/Groq-Llama_3.3_70B-F43F5E?style=for-the-badge&logo=meta&logoColor=white)](https://groq.com)
 [![PySBD](https://img.shields.io/badge/PySBD-Sentence_Chunking-8B5CF6?style=for-the-badge)](https://github.com/nipunsadvilkar/pySBD)
 [![ZK-Merkle Certified](https://img.shields.io/badge/Cryptographic-SHA--256_Merkle_Proof-10B981?style=for-the-badge&logo=shield&logoColor=white)](#-cryptographic-zk-merkle-audit-proof)
+[![Implementation Spec](https://img.shields.io/badge/Architecture-IMPLEMENTATION.md-6366F1?style=for-the-badge&logo=read-the-docs&logoColor=white)](IMPLEMENTATION.md)
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,14,20&height=180&section=header&text=FINCH-ZK%20Framework&fontSize=42&fontColor=fff&animation=twinkling&fontAlignY=38&desc=LLM%20Factuality%20Verification%20%E2%80%A2%20Group%2011%20(2026)&descAlignY=62&descSize=16" width="100%"/>
@@ -139,11 +140,13 @@ This guarantees verifiable authenticity and tamper-resistance for academic evalu
 c:\Users\LOQ\Downloads\azeem\
 ├── app.py                      # Core FINCH-ZK Engine & Flask Web App
 ├── requirements.txt            # Python Dependencies
-├── run.bat                     # 1-Click Windows Launcher Script
+├── ONE_CLICK_START.bat         # 1-Click Instant Launcher (Zero Terminal)
+├── run.bat                     # Automated Windows Launcher Script
 ├── test_app.py                 # 16-Step Automated Integration Test Suite
+├── IMPLEMENTATION.md           # In-Depth Technical Specification & Math Formulations
+├── README.md                   # Complete Platform Documentation
 ├── .env.example                # API Key Configuration Template
 ├── .gitignore                  # Git Ignore Rules
-├── README.md                   # Complete Documentation
 ├── static/
 │   └── style.css               # Cyber Glassmorphism & Neon Design System
 └── templates/
@@ -151,6 +154,8 @@ c:\Users\LOQ\Downloads\azeem\
     ├── dashboard.html          # Interactive Dashboard, Chart.js Hub, 7 Operational Tabs
     └── report.html             # Printable Academic Verification Certificate
 ```
+
+> 📖 **Deep Dive Specification**: For full mathematical proofs, formal data schemas, module class interfaces, and EU AI Act / SOC2 regulatory mapping, refer to **[`IMPLEMENTATION.md`](IMPLEMENTATION.md)**.
 
 ---
 
