@@ -183,10 +183,18 @@ FLASK_SECRET_KEY=finch-zk-super-secret-key-2026
 ```
 *(Note: If API keys are omitted, the built-in heuristic consensus engine safely evaluates all benchmark queries without crashing!)*
 
-### 4. Run the Server
+### 4. Run the Server (1-Click Run)
+Double-click **`ONE_CLICK_START.bat`** (or **`run.bat`**) in Windows Explorer.
+
+It will:
+1. Verify dependencies automatically.
+2. Initialize configuration if needed without blocking.
+3. Start the Flask server on `http://localhost:5000`.
+4. Automatically open your default web browser directly to the dashboard!
+
 ```bash
-# Option A: One-click Launcher (Windows)
-run.bat
+# Option A: One-click Launcher (Double click from folder)
+ONE_CLICK_START.bat
 
 # Option B: Direct Python
 python app.py

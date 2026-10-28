@@ -1171,4 +1171,18 @@ def export_csv():
 # ─────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
+    
+    # Auto-open browser on startup (runs once, avoiding Werkzeug reload duplication)
+    if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
+        import webbrowser
+        import threading
+        
+        def _auto_open():
+            try:
+                webbrowser.open(f"http://localhost:{port}")
+            except Exception:
+                pass
+                
+        threading.Timer(1.2, _auto_open).start()
+
     app.run(debug=True, host="0.0.0.0", port=port)
