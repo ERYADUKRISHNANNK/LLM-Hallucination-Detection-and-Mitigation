@@ -140,7 +140,7 @@ c:\Users\LOQ\Downloads\azeem\
 ├── app.py                      # Core FINCH-ZK Engine & Flask Web App
 ├── requirements.txt            # Python Dependencies
 ├── run.bat                     # 1-Click Windows Launcher Script
-├── test_app.py                 # 12-Step Automated Integration Test Suite
+├── test_app.py                 # 16-Step Automated Integration Test Suite
 ├── .env.example                # API Key Configuration Template
 ├── .gitignore                  # Git Ignore Rules
 ├── README.md                   # Complete Documentation
@@ -148,7 +148,7 @@ c:\Users\LOQ\Downloads\azeem\
 │   └── style.css               # Cyber Glassmorphism & Neon Design System
 └── templates/
     ├── login.html              # Futuristic Admin Login Portal
-    ├── dashboard.html          # Interactive Dashboard, Chart.js Hub & Diff Viewer
+    ├── dashboard.html          # Interactive Dashboard, Chart.js Hub, 7 Operational Tabs
     └── report.html             # Printable Academic Verification Certificate
 ```
 
@@ -198,9 +198,9 @@ Open **`http://localhost:5000`** in your browser.
 
 ---
 
-## 🧪 Comprehensive Automated Test Suite
+## 🧪 Comprehensive Automated Test Suite (16-Step Verification)
 
-Run the full 12-step test suite at any time:
+Run the full 16-step test suite at any time:
 ```bash
 python test_app.py
 ```
@@ -215,15 +215,19 @@ python test_app.py
 [PASS] GET /dashboard -> 200 OK with Chart.js Hub & Guide Ms. Neethu C S
 [PASS] PySBD Segmentation -> 3 atomic chunks extracted
 [PASS] Prompt Variant Generator -> Generated variants: ['identity', 'zero_shot_cot', 'long_answer', 'break_down']
-[PASS] POST /api/analyze -> Executed in 0.01s (Factuality: 75.0% | Hallucination: 25.0%)
+[PASS] POST /api/analyze -> Executed in 0.0s (Factuality: 75.0% | Hallucination: 25.0%)
 [PASS] Contradiction Detection -> Flagged hallucination & provided targeted fix
 [PASS] GET /api/export/json -> Successfully exported JSON audit file
 [PASS] GET /api/export/csv -> Successfully exported CSV audit file
 [PASS] GET /report/audit -> Generated printable Academic ZK Verification Certificate
 [PASS] POST /api/test-connection -> Endpoint connectivity test executed
+[PASS] POST /api/red-team/perturb -> Successfully injected synthetic adversarial entity swap
+[PASS] POST /api/disputes/submit & GET /api/disputes/list -> Human collaborative dispute recorded
+[PASS] GET /api/compliance/metrics -> Retrieved SOC2 & EU AI Act transparency telemetry
+[PASS] POST /api/verify-zk-receipt -> Independent ZK Trust Seal verification successful
 [PASS] GET /logout -> Session terminated safely
 =================================================================
-  ALL 12 COMPREHENSIVE TESTS PASSED WITH 100% SUCCESS! ✓
+  ALL 16 COMPREHENSIVE TESTS PASSED WITH 100% SUCCESS! ✓
 =================================================================
 ```
 
