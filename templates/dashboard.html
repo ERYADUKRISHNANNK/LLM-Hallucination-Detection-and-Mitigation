@@ -1314,81 +1314,161 @@
       toggleSettingsModal(false);
     }
 
-    // Initialize Chart.js
+    // Initialize Chart.js with Offline Canvas Fallback
     function initCharts() {
-      // 1. Factuality Doughnut Chart
-      const ctxFact = document.getElementById('factualityChart').getContext('2d');
-      factualityChartInstance = new Chart(ctxFact, {
-        type: 'doughnut',
-        data: {
-          labels: ['Accurate', 'Contradiction', 'Neutral'],
-          datasets: [{
-            data: [1, 0, 0],
-            backgroundColor: ['#10B981', '#F43F5E', '#F59E0B'],
-            borderColor: '#111827',
-            borderWidth: 2,
-            hoverOffset: 4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: { color: '#9CA3AF', font: { size: 10, family: "'Plus Jakarta Sans'" } }
-            }
+      if (typeof Chart === 'undefined') {
+        console.warn("Chart.js CDN not available. Activating native HTML5 Canvas charts.");
+        drawNativeDonut('factualityChart', [1, 0, 0], ['#10B981', '#F43F5E', '#F59E0B']);
+        drawNativeBar('latencyChart', ['Seg', 'Sampling', 'Eval', 'Mitig'], [0.05, 0.4, 0.6, 0.2], '#06B6D4');
+        drawNativeBar('taxonomyChart', ['Num', 'Inv', 'Temp', 'Ent', 'Sound'], [0, 0, 0, 0, 1], '#8B5CF6');
+        return;
+      }
+      try {
+        // 1. Factuality Doughnut Chart
+        const ctxFact = document.getElementById('factualityChart').getContext('2d');
+        factualityChartInstance = new Chart(ctxFact, {
+          type: 'doughnut',
+          data: {
+            labels: ['Accurate', 'Contradiction', 'Neutral'],
+            datasets: [{
+              data: [1, 0, 0],
+              backgroundColor: ['#10B981', '#F43F5E', '#F59E0B'],
+              borderColor: '#111827',
+              borderWidth: 2,
+              hoverOffset: 4
+            }]
           },
-          cutout: '72%'
-        }
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: { color: '#9CA3AF', font: { size: 10, family: "'Plus Jakarta Sans'" } }
+              }
+            },
+            cutout: '72%'
+          }
+        });
+
+        // 2. Latency Breakdown Bar Chart
+        const ctxLat = document.getElementById('latencyChart').getContext('2d');
+        latencyChartInstance = new Chart(ctxLat, {
+          type: 'bar',
+          data: {
+            labels: ['Seg', 'Sampling', 'Eval', 'Mitig'],
+            datasets: [{
+              label: 'Sec',
+              data: [0.05, 0.4, 0.6, 0.2],
+              backgroundColor: ['#06B6D4', '#6366F1', '#8B5CF6', '#10B981'],
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: '#9CA3AF', font: { size: 9 } }, grid: { display: false } },
+              y: { ticks: { color: '#9CA3AF', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+
+        // 3. Taxonomy Breakdown Horizontal Bar Chart
+        const ctxTax = document.getElementById('taxonomyChart').getContext('2d');
+        taxonomyChartInstance = new Chart(ctxTax, {
+          type: 'bar',
+          indexAxis: 'y',
+          data: {
+            labels: ['Numeric', 'Inventive', 'Temporal', 'Entity', 'Sound'],
+            datasets: [{
+              data: [0, 0, 0, 0, 1],
+              backgroundColor: ['#F43F5E', '#FB7185', '#F59E0B', '#C084FC', '#10B981'],
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: '#9CA3AF', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+              y: { ticks: { color: '#9CA3AF', font: { size: 9 } }, grid: { display: false } }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+      } catch (err) {
+        console.warn("Chart initialization exception:", err);
+      }
+    }
+
+    // Native Canvas fallback for Doughnut Chart (Offline)
+    function drawNativeDonut(canvasId, values, colors) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.parentElement.clientWidth || 260;
+      canvas.height = canvas.parentElement.clientHeight || 180;
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const total = values.reduce((a, b) => a + b, 0) || 1;
+      let startAngle = -Math.PI / 2;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const outerR = Math.min(cx, cy) * 0.78;
+      const innerR = outerR * 0.7;
+
+      values.forEach((v, idx) => {
+        const slice = (v / total) * 2 * Math.PI;
+        ctx.beginPath();
+        ctx.arc(cx, cy, outerR, startAngle, startAngle + slice);
+        ctx.arc(cx, cy, innerR, startAngle + slice, startAngle, true);
+        ctx.closePath();
+        ctx.fillStyle = colors[idx] || '#06B6D4';
+        ctx.fill();
+        startAngle += slice;
       });
 
-      // 2. Latency Breakdown Bar Chart
-      const ctxLat = document.getElementById('latencyChart').getContext('2d');
-      latencyChartInstance = new Chart(ctxLat, {
-        type: 'bar',
-        data: {
-          labels: ['Seg', 'Sampling', 'Eval', 'Mitig'],
-          datasets: [{
-            label: 'Sec',
-            data: [0.05, 0.4, 0.6, 0.2],
-            backgroundColor: ['#06B6D4', '#6366F1', '#8B5CF6', '#10B981'],
-            borderRadius: 4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: { ticks: { color: '#9CA3AF', font: { size: 9 } }, grid: { display: false } },
-            y: { ticks: { color: '#9CA3AF', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
-          },
-          plugins: { legend: { display: false } }
-        }
-      });
+      // Center text
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 16px "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const pct = Math.round((values[0] / total) * 100);
+      ctx.fillText(pct + '%', cx, cy);
+    }
 
-      // 3. Taxonomy Breakdown Horizontal Bar Chart
-      const ctxTax = document.getElementById('taxonomyChart').getContext('2d');
-      taxonomyChartInstance = new Chart(ctxTax, {
-        type: 'bar',
-        indexAxis: 'y',
-        data: {
-          labels: ['Numeric', 'Inventive', 'Temporal', 'Entity', 'Sound'],
-          datasets: [{
-            data: [0, 0, 0, 0, 1],
-            backgroundColor: ['#F43F5E', '#FB7185', '#F59E0B', '#C084FC', '#10B981'],
-            borderRadius: 4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: { ticks: { color: '#9CA3AF', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
-            y: { ticks: { color: '#9CA3AF', font: { size: 9 } }, grid: { display: false } }
-          },
-          plugins: { legend: { display: false } }
-        }
+    // Native Canvas fallback for Bar Chart (Offline)
+    function drawNativeBar(canvasId, labels, values, baseColor) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.parentElement.clientWidth || 260;
+      canvas.height = canvas.parentElement.clientHeight || 180;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const maxVal = Math.max(...values, 1);
+      const padding = 20;
+      const chartW = canvas.width - padding * 2;
+      const chartH = canvas.height - padding * 2 - 20;
+      const barW = (chartW / labels.length) * 0.6;
+      const step = chartW / labels.length;
+
+      labels.forEach((lbl, idx) => {
+        const x = padding + idx * step + (step - barW) / 2;
+        const barH = (values[idx] / maxVal) * chartH;
+        const y = canvas.height - padding - barH - 15;
+
+        // Draw Bar
+        ctx.fillStyle = baseColor || '#06B6D4';
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(x, y, barW, barH, 4) : ctx.rect(x, y, barW, barH);
+        ctx.fill();
+
+        // Label
+        ctx.fillStyle = '#94A3B8';
+        ctx.font = '9px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(lbl, x + barW / 2, canvas.height - padding + 5);
       });
     }
 
@@ -1737,6 +1817,8 @@
           m.neutral_count
         ];
         factualityChartInstance.update();
+      } else {
+        drawNativeDonut('factualityChart', [m.accurate_count || 1, m.contra_count || 0, m.neutral_count || 0], ['#10B981', '#F43F5E', '#F59E0B']);
       }
 
       // Update Chart 2: Latency Breakdown
@@ -1748,6 +1830,9 @@
           m.latency_breakdown.mitigation || 0.2
         ];
         latencyChartInstance.update();
+      } else {
+        const lb = m.latency_breakdown || {};
+        drawNativeBar('latencyChart', ['Seg', 'Sampling', 'Eval', 'Mitig'], [lb.segmentation || 0.05, lb.sampling || 0.4, lb.evaluation || 0.5, lb.mitigation || 0.2], '#06B6D4');
       }
 
       // Update Chart 3: Taxonomy Breakdown
@@ -1761,6 +1846,15 @@
           m.accurate_count || 1
         ];
         taxonomyChartInstance.update();
+      } else {
+        const tb = m.taxonomy_breakdown || {};
+        drawNativeBar('taxonomyChart', ['Num', 'Inv', 'Temp', 'Ent', 'Sound'], [
+          tb['Numeric / Quantity Discrepancy'] || 0,
+          tb['Inventive / Fabricated Achievement'] || 0,
+          tb['Temporal / Chronological Error'] || 0,
+          tb['Entity / Attribution Hallucination'] || 0,
+          m.accurate_count || 1
+        ], '#8B5CF6');
       }
 
       // Update Diff Panels
