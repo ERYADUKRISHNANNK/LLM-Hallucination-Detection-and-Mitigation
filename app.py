@@ -1172,17 +1172,42 @@ def export_csv():
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
     
-    # Auto-open browser on startup (runs once, avoiding Werkzeug reload duplication)
+    # Auto-open browser on startup once the server is ACTUALLY listening
     if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
         import webbrowser
         import threading
+        import socket
+        import time
+        import subprocess
+        
+        # Free port if occupied by a stale previous process
+        try:
+            with socket.create_connection(("127.0.0.1", port), timeout=0.2):
+                try:
+                    out = subprocess.check_output(f'netstat -aon | findstr :{port}', shell=True).decode()
+                    for line in out.strip().splitlines():
+                        if "LISTENING" in line:
+                            pid = line.strip().split()[-1]
+                            if pid.isdigit() and int(pid) != os.getpid():
+                                subprocess.run(f'taskkill /F /PID {pid}', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                except Exception:
+                    pass
+        except OSError:
+            pass
         
         def _auto_open():
-            try:
-                webbrowser.open(f"http://localhost:{port}")
-            except Exception:
-                pass
+            # Actively poll until Flask server is accepting connections
+            for _ in range(60):
+                time.sleep(0.5)
+                try:
+                    with socket.create_connection(("127.0.0.1", port), timeout=0.5):
+                        # Server is live! Open the dashboard
+                        time.sleep(0.4)
+                        webbrowser.open(f"http://localhost:{port}")
+                        return
+                except OSError:
+                    continue
                 
-        threading.Timer(1.2, _auto_open).start()
+        threading.Thread(target=_auto_open, daemon=True).start()
 
     app.run(debug=True, host="0.0.0.0", port=port)

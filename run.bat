@@ -1,7 +1,7 @@
 @echo off
-title FINCH-ZK — LLM Hallucination Detection & Mitigation Platform
-cls
-color 0B
+cd /d "%~dp0"
+title FINCH-ZK LLM Hallucination Detection and Mitigation
+
 echo.
 echo  =============================================================================
 echo    [+] FINCH-ZK v2.4 Enterprise Platform
@@ -10,9 +10,29 @@ echo    Vidya Academy of Science and Technology, Thrissur
 echo  =============================================================================
 echo.
 
-REM 1. Ensure .env exists without blocking
+:: 1. Detect Python
+set PY_CMD=python
+python --version >nul 2>&1
+if errorlevel 1 (
+    py --version >nul 2>&1
+    if not errorlevel 1 (
+        set PY_CMD=py
+    ) else if exist "%LOCALAPPDATA%\Programs\Python\Python313\python.exe" (
+        set "PY_CMD=%LOCALAPPDATA%\Programs\Python\Python313\python.exe"
+    ) else (
+        echo [ERROR] Python was not found on your system!
+        echo         Please install Python 3.10+ from https://python.org
+        echo         Ensure "Add Python to PATH" is checked during installation.
+        pause
+        exit /b 1
+    )
+)
+
+echo  [*] Python interpreter: %PY_CMD%
+
+:: 2. Ensure .env exists
 if not exist .env (
-    echo  [*] Initializing environment configuration...
+    echo  [*] Initializing default .env configuration...
     if exist .env.example (
         copy .env.example .env >nul
     ) else (
@@ -20,24 +40,29 @@ if not exist .env (
     )
 )
 
-REM 2. Install dependencies silently if needed
+:: 3. Fast dependency check
 echo  [*] Checking dependencies (Flask, PySBD, Anthropic, Requests)...
-python -m pip install -r requirements.txt --quiet --disable-pip-version-check
+%PY_CMD% -c "import flask, pysbd, anthropic, requests" >nul 2>&1
+if errorlevel 1 (
+    echo  [*] Installing required dependencies from requirements.txt...
+    %PY_CMD% -m pip install -r requirements.txt --disable-pip-version-check
+) else (
+    echo  [*] All dependencies are verified and ready.
+)
 
 echo.
-echo  [*] Starting FINCH-ZK Platform on http://localhost:5000 ...
-echo      Admin Credentials:
-echo        - Username: admin
-echo        - Password: admin
+echo  [*] Starting FINCH-ZK Platform...
+echo      - Dashboard URL: http://localhost:5000
+echo      - Login user:    admin
+echo      - Login pass:    admin
 echo.
-echo  [*] Opening your browser automatically in 2 seconds...
-echo      (Press Ctrl+C in this window anytime to stop the server)
+echo  [*] Opening your browser automatically once the server is listening...
+echo      (Press Ctrl+C anytime in this window to stop the server)
 echo.
 
-REM 3. Trigger browser opener in background
-start "" cmd /c "timeout /t 2 /nobreak >nul & start http://localhost:5000"
+:: 4. Start Flask App
+%PY_CMD% app.py
 
-REM 4. Launch Flask Application
-python app.py
-
+echo.
+echo  [!] Server stopped.
 pause
